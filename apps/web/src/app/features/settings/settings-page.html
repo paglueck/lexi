@@ -1,0 +1,602 @@
+<div class="page">
+  <nav class="rail" aria-label="Settings sections">
+    <h2 class="lx-caption lx-caption--wide">Settings</h2>
+    @for (item of navItems(); track item.id) {
+      <button
+        type="button"
+        class="nav"
+        [attr.aria-current]="section() === item.id ? 'page' : null"
+        (click)="section.set(item.id)"
+      >
+        <lx-nav-row [label]="item.label" [active]="section() === item.id" />
+      </button>
+    }
+  </nav>
+
+  <div class="pane">
+    @if (store.loadFailed()) {
+      <p class="callout callout--bad" role="alert">
+        The settings could not be read from the server, so what is shown here are defaults. Reload
+        the page once Lexi is running again.
+      </p>
+    }
+    <!-- The Model pane shows its own error beside the fields it is about. -->
+    @if (section() !== 'model' && store.error(); as error) {
+      <p class="callout callout--bad" role="alert">{{ error }}</p>
+    }
+    @if (section() === 'model') {
+      @let llm = store.llm();
+
+      <!-- FR-6.1, FR-6.2: where the model is, and which shape it speaks. -->
+      <section class="group">
+        <h1 class="title">Endpoint</h1>
+
+        <lx-radio-card-group class="cards" aria-label="Adapter">
+          <lx-radio-card
+            title="OpenAI-compatible"
+            hint="Ollama, LM Studio, llama.cpp, vLLM, LocalAI, Jan"
+            [selected]="llm?.adapter === 'openai'"
+            (click)="selectAdapter('openai')"
+          />
+          <lx-radio-card
+            title="GitHub Copilot"
+            hint="Your Copilot subscription — any model your plan allows"
+            [selected]="llm?.adapter === 'copilot'"
+            (click)="selectAdapter('copilot')"
+          />
+          <lx-radio-card
+            class="card--unavailable"
+            title="Ollama native"
+            hint="/api/chat — not implemented in this version"
+            [selected]="false"
+            disabled
+          />
+        </lx-radio-card-group>
+
+        <div class="fields">
+          @if (!copilot()) {
+            <lx-field
+              label="Base URL"
+              hint="The path style matters: most servers want /v1 on the end."
+            >
+              <input
+                lxInput
+                class="lx-mono"
+                type="url"
+                spellcheck="false"
+                autocomplete="off"
+                placeholder="http://localhost:11434/v1"
+                [value]="baseUrl()"
+                (input)="baseUrl.set($any($event.target).value)"
+                (change)="saveBaseUrl()"
+              />
+            </lx-field>
+          }
+
+          <!-- focusout rather than a keystroke: a patch is a commit. The list
+               comes from the last probe, and free text still wins — a model
+               that is not in the list is a model the server may still load. -->
+          <lx-field
+            label="Model"
+            [hint]="
+              models().length > 0
+                ? 'From the last connection test.'
+                : copilot()
+                  ? 'Test the connection to list the models your Copilot plan allows.'
+                  : 'Test the connection to list what this server offers.'
+            "
+          >
+            <div class="combo" (focusout)="saveModel()">
+              <lx-combobox [(value)]="model" [options]="models()" label="Model" />
+            </div>
+          </lx-field>
+
+          <lx-field
+            [label]="copilot() ? 'GitHub token' : 'API key'"
+            [optional]="!copilot()"
+            [hint]="
+              llm?.apiKeySet
+                ? 'A key is stored. Type to replace it.'
+                : copilot()
+                  ? 'Required. A fine-grained token with the Copilot Requests permission, from an account with a Copilot seat.'
+                  : 'Most local servers accept any value, or none.'
+            "
+          >
+            <input
+              lxInput
+              class="lx-mono"
+              type="password"
+              autocomplete="off"
+              [attr.placeholder]="
+                llm?.apiKeySet
+                  ? '••••••••  stored'
+                  : copilot()
+                    ? 'github_pat_…'
+                    : 'not required for this server'
+              "
+              [value]="apiKey()"
+              (input)="apiKey.set($any($event.target).value)"
+              (change)="saveApiKey()"
+            />
+          </lx-field>
+
+          <div class="actions">
+            <button
+              lx-button
+              type="button"
+              variant="secondary"
+              size="field"
+              [disabled]="
+                store.testing() || (copilot() ? !llm?.apiKeySet : (llm?.baseUrl ?? '') === '')
+              "
+              (click)="testConnection()"
+            >
+              {{ store.testing() ? 'Testing…' : 'Test connection' }}
+            </button>
+            @if (llm?.apiKeySet) {
+              <button
+                lx-button
+                type="button"
+                variant="danger-soft"
+                size="field"
+                title="Forget the stored API key"
+                (click)="clearApiKey()"
+              >
+                <lx-icon name="trash" [size]="13" />
+                Remove key
+              </button>
+            }
+          </div>
+        </div>
+
+        @if (store.error(); as error) {
+          <p class="callout callout--bad" role="alert">{{ error }}</p>
+        }
+
+        <!-- FR-6.3: three answers, not one. A wrong port, a server with no such
+             model and a model that cannot complete have three different fixes. -->
+        @if (store.probe(); as probe) {
+          <div class="callout" [attr.data-tone]="probeTone()">
+            <p class="callout__head">
+              <span aria-hidden="true">{{ probe.ok ? '✓' : GLYPH.error }}</span>
+              <span>{{ probe.ok ? 'Reachable' : 'Not usable yet' }} · {{ probe.endpoint }}</span>
+            </p>
+            <ul class="steps">
+              @for (step of probe.steps; track step.step) {
+                <li class="step" [attr.data-ok]="step.ok">
+                  <span class="step__mark" aria-hidden="true">{{ step.ok ? '✓' : '×' }}</span>
+                  <span class="step__label">{{ STEP_LABEL[step.step] }}</span>
+                  <span class="step__detail">{{ step.detail }}</span>
+                  @if (step.latencyMs !== null) {
+                    <span class="step__ms lx-mono lx-num">{{ step.latencyMs }} ms</span>
+                  }
+                </li>
+              }
+            </ul>
+            @if (probe.models.length > 0) {
+              <ul class="models">
+                @for (name of probe.models; track name) {
+                  <li>
+                    <button type="button" class="model" (click)="model.set(name); saveModel()">
+                      {{ name }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- FR-6.4 and FR-6.8. -->
+      <section class="group">
+        <h1 class="title">Generation</h1>
+        @if (copilot()) {
+          <p class="warn-hint">
+            GitHub Copilot does not take temperature, top_p, max tokens or a seed, so those fields
+            are hidden while it is selected — they are kept for when you switch back. Every request
+            counts against your Copilot premium requests, scaled by the model's multiplier: more
+            units per request means fewer requests per job.
+          </p>
+        }
+
+        <div class="numbers">
+          @if (!copilot()) {
+            <lx-field label="Temperature">
+              <input
+                lxInput
+                type="number"
+                [attr.min]="LIMITS.temperature.min"
+                [attr.max]="LIMITS.temperature.max"
+                [attr.step]="LIMITS.temperature.step"
+                [value]="param('temperature')"
+                (change)="saveParam('temperature', $any($event.target).value)"
+              />
+            </lx-field>
+            <lx-field label="top_p">
+              <input
+                lxInput
+                type="number"
+                [attr.min]="LIMITS.topP.min"
+                [attr.max]="LIMITS.topP.max"
+                [attr.step]="LIMITS.topP.step"
+                [value]="param('topP')"
+                (change)="saveParam('topP', $any($event.target).value)"
+              />
+            </lx-field>
+            <lx-field
+              label="Max tokens"
+              hint="A translation needs about a hundred. A large budget only matters once something is spending it."
+            >
+              <input
+                lxInput
+                type="number"
+                [attr.min]="LIMITS.maxTokens.min"
+                [attr.max]="LIMITS.maxTokens.max"
+                [value]="param('maxTokens')"
+                (change)="saveParam('maxTokens', $any($event.target).value)"
+              />
+            </lx-field>
+          }
+          <lx-field label="Context window" hint="No endpoint reports it; the meter needs it.">
+            <input
+              lxInput
+              type="number"
+              [attr.min]="LIMITS.contextWindow.min"
+              [attr.max]="LIMITS.contextWindow.max"
+              [value]="param('contextWindow')"
+              (change)="saveParam('contextWindow', $any($event.target).value)"
+            />
+          </lx-field>
+          <lx-field
+            label="Response timeout (s)"
+            hint="Local models can be slow to load and to answer."
+          >
+            <input
+              lxInput
+              type="number"
+              [attr.min]="LIMITS.requestTimeoutSeconds.min"
+              [attr.max]="LIMITS.requestTimeoutSeconds.max"
+              [attr.step]="LIMITS.requestTimeoutSeconds.step"
+              [value]="param('requestTimeoutSeconds')"
+              (change)="saveParam('requestTimeoutSeconds', $any($event.target).value)"
+            />
+          </lx-field>
+          @if (!copilot()) {
+            <lx-field label="Seed" hint="Empty for none.">
+              <input
+                lxInput
+                type="number"
+                [value]="param('seed')"
+                (change)="saveParam('seed', $any($event.target).value)"
+              />
+            </lx-field>
+          }
+        </div>
+
+        <div class="fields">
+          <lx-field label="Concurrent requests" hint="Local models usually serialize on one GPU.">
+            <input
+              lxInput
+              type="number"
+              [attr.min]="LIMITS.concurrency.min"
+              [attr.max]="LIMITS.concurrency.max"
+              [value]="param('concurrency')"
+              (change)="saveParam('concurrency', $any($event.target).value)"
+            />
+          </lx-field>
+          <lx-field
+            label="Units per request"
+            hint="Strings sent to the model in one request during a job (FR-6.8)."
+          >
+            <input
+              lxInput
+              type="number"
+              [attr.min]="LIMITS.unitsPerRequest.min"
+              [attr.max]="LIMITS.unitsPerRequest.max"
+              [value]="param('unitsPerRequest')"
+              (change)="saveParam('unitsPerRequest', $any($event.target).value)"
+            />
+          </lx-field>
+        </div>
+        <p class="warn-hint">
+          More than one unit per request is faster, and a model can misalign its answers against the
+          strings it was given. Lexi checks every item's key and the source it echoes back: a
+          missing, repeated or swapped item rejects only that string, and an answer it cannot read
+          falls back to one string per request — slower, never wrong.
+        </p>
+
+        <div class="toggle">
+          <div class="toggle__text">
+            <span class="toggle__label">Reasoning</span>
+            <span class="toggle__hint">
+              @if (copilot()) {
+                Only applies to Copilot models that support a reasoning level, and only if the model
+                offers the level chosen. Copilot has no way to turn reasoning off, so
+                <strong>Off</strong> and <strong>Server default</strong> both leave the model at its
+                own default.
+              } @else {
+                Reasoning models think before they answer, in tokens you pay for and never see. For
+                a one-line UI string that buys nothing and can cost everything: a single button
+                label has been seen to argue with itself until it exhausted a 10,000-token budget
+                and blew the response timeout. <strong>Off</strong> sends
+                <code class="lx-mono">reasoning_effort: "none"</code>.
+                <strong>Server default</strong> sends nothing at all, which is what an endpoint that
+                has never heard of the field needs.
+              }
+            </span>
+          </div>
+          <lx-segmented-control
+            [options]="REASONING_OPTIONS"
+            [value]="reasoning()"
+            (valueChange)="setReasoning($event)"
+          />
+        </div>
+
+        @if (budgetWarning(); as warning) {
+          <p class="warn-hint">{{ warning }}</p>
+        }
+
+        <div class="toggles">
+          <div class="toggle">
+            <lx-toggle
+              aria-label="Mask placeholders as [[n]] tokens before sending"
+              [checked]="llm?.maskPlaceholders ?? false"
+              (checkedChange)="toggleMask($event)"
+            />
+            <div class="toggle__text">
+              <span class="toggle__label"
+                >Mask placeholders as <code class="lx-mono">[[n]]</code> tokens before sending</span
+              >
+              <span class="toggle__hint">
+                Local models reproduce short bracketed tokens far more reliably than
+                <code class="lx-mono">&lt;x id="…" equiv-text="…"/&gt;</code>, and restoring them is
+                a mechanical lookup that either succeeds completely or fails loudly. Off by default:
+                raw markup is sent as written, which keeps markup in the source text intact.
+              </span>
+            </div>
+          </div>
+
+          <div class="toggle">
+            <lx-toggle
+              aria-label="Include similar approved translations as few-shot examples"
+              [checked]="llm?.fewShotExamples ?? false"
+              (checkedChange)="toggleFewShot($event)"
+            />
+            <div class="toggle__text">
+              <span class="toggle__label">Include similar approved translations as examples</span>
+              <span class="toggle__hint">
+                Translation memory as few-shot context. Stored now, used when the drafting milestone
+                lands.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- The one setting on this pane that belongs to the project, not the
+             machine: it is committed in .lexi/project.json. -->
+        <div class="project-setting">
+          <div class="toggle__text">
+            <span class="toggle__label">Write <code class="lx-mono">state</code> attributes</span>
+            <span class="toggle__hint">
+              @if (project.isOpen()) {
+                <strong>Auto</strong> writes <code class="lx-mono">new</code> /
+                <code class="lx-mono">translated</code> / <code class="lx-mono">final</code> only
+                into files that already carry a state, so a one-word change stays a one-line diff.
+                <strong>Always</strong> matches <code class="lx-mono">ng-extract-i18n-merge</code>.
+                <strong>Never</strong> writes none — and never strips the ones your own tooling
+                wrote. This one is a project setting: it is committed in
+                <code class="lx-mono">.lexi/project.json</code>.
+              } @else {
+                A project setting, so it needs a project open.
+              }
+            </span>
+          </div>
+          @if (project.isOpen()) {
+            <lx-segmented-control
+              [options]="WRITE_STATE_OPTIONS"
+              [value]="writeState()"
+              (valueChange)="setWriteState($event)"
+            />
+          }
+        </div>
+      </section>
+
+      <!-- FR-6.15, in the one place a user can change where the requests go. -->
+      <section class="privacy">
+        <span class="privacy__mark" aria-hidden="true">✓</span>
+        <p class="privacy__text">
+          @if (copilot()) {
+            Translation requests go to GitHub Copilot, under your Copilot account and your
+            organization's Copilot policies — nowhere else. Tools are disabled for every request,
+            and each Copilot session is deleted once it has answered.
+            <strong class="privacy__warn">Strings sent for translation leave this machine.</strong>
+          } @else if ((llm?.baseUrl ?? '') === '') {
+            Nothing is contacted at all until you configure an endpoint here. Lexi has no telemetry,
+            no analytics and no account.
+          } @else {
+            No outbound request goes to any host other than
+            <code class="lx-mono">{{ llm?.baseUrl }}</code
+            >. The server refuses every other origin and never follows a redirect off it; the page
+            itself cannot make outbound requests at all.
+            @if (llm?.loopback === false) {
+              <strong class="privacy__warn">
+                This endpoint is not on your machine — strings sent to it leave it.
+              </strong>
+            }
+          }
+        </p>
+      </section>
+    } @else if (section() === 'phrase') {
+      <lx-phrase-tokens />
+    } @else if (section() === 'appearance') {
+      <section class="group">
+        <h1 class="title">Appearance</h1>
+        <lx-radio-card-group class="cards cards--three" aria-label="Theme">
+          @for (item of THEMES; track item.mode) {
+            <lx-radio-card
+              [title]="item.label"
+              [hint]="item.hint"
+              [selected]="theme.mode() === item.mode"
+              (click)="setTheme(item.mode)"
+            />
+          }
+        </lx-radio-card-group>
+        <p class="pending">
+          The app's own interface is in English. Localising it needs
+          <code class="lx-mono">&#64;angular/localize</code> in the build, which is a decision
+          rather than a setting — until it is made, every string lives in a template so a later
+          extraction picks it up.
+        </p>
+      </section>
+    } @else if (section() === 'validation') {
+      <section class="group">
+        <h1 class="title">Validation rules</h1>
+        <p class="pending">
+          Every rule already runs on every save; this only changes how loudly it complains (FR-8.2).
+          A rule set to <strong>Off</strong> never blocks a save or reaches Final state for the
+          units it would otherwise flag.
+        </p>
+
+        @if (project.isOpen()) {
+          <div class="toggles">
+            @for (rule of RULE_IDS; track rule) {
+              <div class="project-setting" [attr.data-rule]="rule">
+                <div class="toggle__text">
+                  <span class="toggle__label" [id]="'rule-' + rule">{{ RULE_TITLE[rule] }}</span>
+                  <span class="toggle__hint lx-mono">{{ rule }}</span>
+                </div>
+                <lx-segmented-control
+                  [options]="SEVERITY_OPTIONS"
+                  [ariaLabelledby]="'rule-' + rule"
+                  [value]="severity(rule)"
+                  (valueChange)="setSeverity(rule, $event)"
+                />
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="pending">A project setting, so it needs a project open.</p>
+        }
+      </section>
+    } @else if (section() === 'editor') {
+      <section class="group">
+        <h1 class="title">Editor</h1>
+        <p class="pending">
+          How placeholders render in the target editor, everywhere it appears — the grid's detail
+          panel and Focus mode both follow this. A personal, per-browser preference, not something a
+          project commits.
+        </p>
+        <lx-radio-card-group class="cards" aria-label="Placeholder rendering">
+          @for (item of EDITOR_MODE_OPTIONS; track item.mode) {
+            <lx-radio-card
+              [attr.data-mode]="item.mode"
+              [title]="item.label"
+              [hint]="item.hint"
+              [selected]="store.editorMode() === item.mode"
+              (click)="setEditorMode(item.mode)"
+            />
+          }
+        </lx-radio-card-group>
+      </section>
+    } @else if (section() === 'shortcuts') {
+      <section class="group">
+        <h1 class="title">Shortcuts</h1>
+        <p class="pending">
+          Fixed for now — rebinding is not built. The command palette (<kbd class="lx-mono">⌘K</kbd
+          >) reaches the same navigation these do.
+        </p>
+        @for (group of SHORTCUT_GROUPS; track group.title) {
+          <div class="shortcut-group">
+            <h2 class="lx-caption lx-caption--wide">{{ group.title }}</h2>
+            <ul class="shortcut-list">
+              @for (item of group.items; track item.key) {
+                <li class="shortcut-row">
+                  <kbd class="lx-mono">{{ item.key }}</kbd>
+                  <span>{{ item.text }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </section>
+    } @else if (section() === 'updates') {
+      @let u = update.state();
+      <section class="group">
+        <h1 class="title">Updates</h1>
+        <p class="pending">
+          You are using Lexi {{ update.currentVersion() }}. Lexi looks for a new version every time
+          it starts; skipping one only skips it until the next start.
+          @if (update.mode() === 'dmg') {
+            On macOS, an update arrives as a disk image: drag Lexi into Applications to finish it.
+          }
+        </p>
+
+        <div class="actions actions--start">
+          <button
+            lx-button
+            type="button"
+            variant="secondary"
+            size="field"
+            [disabled]="u.phase === 'checking' || u.phase === 'downloading' || u.phase === 'ready'"
+            (click)="checkForUpdates()"
+          >
+            {{ u.phase === 'checking' ? 'Checking…' : 'Check for updates' }}
+          </button>
+          @if (u.phase === 'available') {
+            <button lx-button type="button" variant="primary" size="field" (click)="updateNow()">
+              Update to {{ u.version }}
+            </button>
+          }
+        </div>
+
+        @switch (u.phase) {
+          @case ('none') {
+            <p class="callout" data-tone="ok" role="status">Lexi is up to date.</p>
+          }
+          @case ('available') {
+            <div class="callout" role="status">
+              <p class="callout__head">Lexi {{ u.version }} is available</p>
+              @if (u.releaseNotes) {
+                <pre class="notes">{{ u.releaseNotes }}</pre>
+              }
+            </div>
+          }
+          @case ('downloading') {
+            <p class="callout" role="status">
+              Downloading Lexi {{ u.version }}… {{ updatePercent() }} %
+            </p>
+          }
+          @case ('ready') {
+            <p class="callout" role="status">Lexi {{ u.version }} is ready to install.</p>
+          }
+          @case ('error') {
+            <p class="callout callout--bad" role="alert">{{ u.message }}</p>
+          }
+        }
+      </section>
+    } @else if (section() === 'about') {
+      <!-- The GPL travels with every copy, and a binary has to point to its
+           source; build:licenses puts the license files next to the app. -->
+      <section class="group">
+        <h1 class="title">About &amp; license</h1>
+        <p class="pending">
+          Lexi {{ project.version() }} — originally developed by Patrick Glück. Lexi is free
+          software under the GNU General Public License v3 or later, and comes with no warranty.
+        </p>
+        <p class="pending">
+          <a href="https://github.com/paglueck/lexi" target="_blank" rel="noopener">Source code</a>
+          · <a href="LICENSE.txt" target="_blank" rel="noopener">License</a> ·
+          <a href="NOTICE.txt" target="_blank" rel="noopener">Notices</a> ·
+          <a href="THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">Third-party notices</a> ·
+          <a href="third-party-licenses.txt" target="_blank" rel="noopener">Dependency licenses</a>
+        </p>
+      </section>
+    } @else {
+      <section class="group">
+        <h1 class="title">{{ sectionLabel() }}</h1>
+        <p class="pending">{{ pending() }}</p>
+      </section>
+    }
+  </div>
+</div>

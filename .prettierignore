@@ -1,0 +1,18 @@
+dist/
+.angular/
+node_modules/
+package-lock.json
+apps/server/public/
+apps/web/public/fonts/
+apps/web/src/styles/base/fonts.css
+design_*/
+
+# Markdown is written by hand here, with deliberate line breaks and unpadded
+# tables. Prettier re-wraps prose and pads every table cell, which turns a
+# one-line documentation edit into a 300-line diff.
+*.md
+
+# The engine was written and formatted before Prettier existed in this repo.
+# Reformatting 12 files with 335 passing tests buys nothing and hides the next
+# real change to them in the noise.
+packages/xliff/

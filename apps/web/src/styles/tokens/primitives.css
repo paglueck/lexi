@@ -1,0 +1,129 @@
+/*
+ * Raw palette. Every hex in the product appears exactly once, here.
+ *
+ * These are NEVER referenced outside tokens/semantic.*.css — stylelint enforces
+ * it. Components read semantic tokens, semantic tokens read primitives, and
+ * that indirection is the only reason the light theme is a drop-in.
+ *
+ * Steps are ordinal by lightness within a family, not a perceptual scale: the
+ * palette is hand-tuned in the design handoff and a fake scale would imply a
+ * regularity that is not there.
+ */
+:root {
+  /* ---- slate: the dark theme's neutrals (cool) ---- */
+  --p-slate-950: #0c0f10;
+  --p-slate-940: #0f1315;
+  --p-slate-930: #101315;
+  --p-slate-920: #121618;
+  --p-slate-910: #131719;
+  --p-slate-900: #16191c;
+  --p-slate-870: #1b2023;
+  /* S18: a primary button that cannot be pressed yet. */
+  --p-slate-850: #1f2629;
+  --p-slate-860: #1c2225;
+  --p-slate-840: #21282b;
+  --p-slate-830: #232a2e;
+  --p-slate-820: #242b2f;
+  --p-slate-810: #252d31;
+  --p-slate-800: #272e33;
+  --p-slate-780: #2b3338;
+  --p-slate-700: #394247;
+  --p-slate-690: #3a4348;
+  --p-slate-640: #4a5459;
+  --p-slate-620: #4e585d;
+  --p-slate-560: #5d686e;
+  --p-slate-500: #6b777d;
+  --p-slate-400: #8a979e;
+  --p-slate-380: #98a5ac;
+  --p-slate-200: #c3ced3;
+  --p-slate-150: #d7e1e5;
+  --p-slate-100: #e8eef1;
+
+  /* ---- stone: the light theme's neutrals (warm/green) ---- */
+  --p-stone-0: #ffffff;
+  --p-stone-50: #fafaf8;
+  --p-stone-100: #f4f5f2;
+  --p-stone-150: #edefec;
+  --p-stone-200: #e6e9e5;
+  --p-stone-250: #dfe2df;
+  --p-stone-300: #daded9;
+  --p-stone-350: #d5dad7;
+  --p-stone-400: #c7cdc9;
+  --p-stone-500: #a9b1b5;
+  --p-stone-550: #8a949a;
+  --p-stone-600: #7e888e;
+  --p-stone-650: #6c767c;
+  --p-stone-700: #5e6a70;
+  --p-stone-950: #15191b;
+
+  /* ---- teal: accent, reviewed/final, chips ---- */
+  --p-teal-990: #062a27;
+  --p-teal-980: #0f1f1e;
+  /* S16's "From CSV" card. */
+  --p-teal-978: #0e1a19;
+  --p-teal-975: #111a19;
+  --p-teal-970: #12302c;
+  --p-teal-965: #17262a;
+  /* S17/S18: a selected card under the pointer. */
+  --p-teal-955: #1a2e32;
+  --p-teal-960: #1a2a2c;
+  --p-teal-900: #1e4a44;
+  --p-teal-880: #2e4448;
+  --p-teal-700: #1e7f76;
+  --p-teal-600: #4a8a82;
+  --p-teal-500: #5f9c94;
+  /* S16's char count on the "From CSV" card. */
+  --p-teal-450: #6fa79f;
+  --p-teal-400: #2dd4bf;
+  --p-teal-300: #7fd9ce;
+  /* S12's accepted-fix chip label. */
+  --p-teal-250: #8fe3d6;
+  --p-teal-l800: #08453f;
+  --p-teal-l700: #0b5d56;
+  --p-teal-l600: #0e7c72;
+  --p-teal-l500: #5a9b93;
+  --p-teal-l300: #7fc0b8;
+  --p-teal-l250: #a8d2cc;
+  --p-teal-l200: #b4dad5;
+  --p-teal-l150: #cfe9e5;
+  --p-teal-l100: #e3f1ef;
+  --p-teal-l50: #eff7f5;
+
+  /* ---- amber: machine drafts, warnings ---- */
+  --p-amber-980: #1a130a;
+  --p-amber-970: #241c0c;
+  --p-amber-960: #251a0c;
+  --p-amber-940: #2a2114;
+  --p-amber-900: #3a2a11;
+  --p-amber-800: #5c4419;
+  --p-amber-750: #6b4c1c;
+  --p-amber-600: #8c6526;
+  --p-amber-400: #e8a33d;
+  --p-amber-350: #c9a878;
+  --p-amber-300: #efc489;
+  --p-amber-250: #f0ce9a;
+  --p-amber-l700: #6b4e14;
+  --p-amber-l600: #8a5b08;
+  --p-amber-l500: #c08d2c;
+  --p-amber-l450: #c07e12;
+  --p-amber-l300: #ddb76a;
+  --p-amber-l100: #fbf0da;
+
+  /* ---- coral: needs review, validation errors ---- */
+  --p-coral-980: #1a0f0c;
+  --p-coral-970: #251310;
+  --p-coral-960: #2e1611;
+  /* S19: the Remove token button's border. */
+  --p-coral-920: #3a2420;
+  --p-coral-900: #3f2a24;
+  --p-coral-800: #6b2e1e;
+  --p-coral-400: #e4694c;
+  --p-coral-300: #e8a08c;
+  /* S19: the second line of a rejected token's status. */
+  --p-coral-350: #b07a6b;
+  --p-coral-l700: #a83a1e;
+  --p-coral-l500: #c0503a;
+  --p-coral-l300: #e0a992;
+  --p-coral-l100: #fbe8e1;
+  --p-coral-l50: #fdf2ee;
+}

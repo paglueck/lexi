@@ -1,0 +1,125 @@
+/* Shared by S18's step components: section labels, selectable cards, radios. */
+
+.label {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+  font-weight: var(--lx-fw-400);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.label-row {
+  display: flex;
+  gap: var(--lx-sp-10);
+  align-items: center;
+}
+
+.count {
+  color: var(--lx-text-subtle);
+  font-size: var(--lx-fs-11-5);
+}
+
+.link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--lx-accent-on-tint);
+  font: inherit;
+  font-size: var(--lx-fs-11-5);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.push {
+  margin-left: auto;
+}
+
+.radio {
+  flex: none;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--lx-neutral-border-strong);
+  border-radius: var(--lx-r-full);
+}
+
+.radio--on {
+  border: 3px solid var(--lx-accent);
+}
+
+.pick {
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-9);
+  background: var(--lx-bg-panel);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pick:hover:not(:disabled) {
+  background: var(--lx-bg-raised);
+}
+
+.pick--on,
+.pick--on:hover:not(:disabled) {
+  border-color: var(--lx-accent);
+  background: var(--lx-bg-selected);
+}
+
+.pick:disabled {
+  cursor: default;
+}
+
+.pick:focus-visible {
+  outline: none;
+  box-shadow: var(--lx-ring-focus);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--lx-border-section);
+  border-radius: var(--lx-r-9);
+  background: var(--lx-bg-panel);
+}
+
+.region {
+  padding: 0 5px;
+  border: 1px solid var(--lx-neutral-tint-border);
+  border-radius: var(--lx-r-3);
+  color: var(--lx-text-subtle);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+}
+
+.bad {
+  color: var(--lx-danger);
+}
+
+.muted {
+  color: var(--lx-text-faint);
+}
+
+.mono {
+  font-family: var(--lx-font-mono);
+}
+
+.error {
+  margin: 0;
+  color: var(--lx-danger);
+  font-size: var(--lx-fs-11-5);
+}
+
+.skeleton {
+  display: block;
+  height: 10px;
+  border-radius: var(--lx-r-3);
+  background: var(--lx-border-table);
+}

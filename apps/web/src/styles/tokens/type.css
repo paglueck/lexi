@@ -1,0 +1,58 @@
+/*
+ * Typography. px, not rem: the design is px-exact down to half-pixel steps
+ * (12.5 / 11.5 / 10.5 / 9.5) and browser zoom scales px perfectly well. Dots in
+ * a size become dashes in the token name: 13.5px -> --lx-fs-13-5.
+ */
+:root {
+  /* Public Sans has no Greek, Cyrillic or Arabic (contrary to the plan's
+     assumption), so Noto carries those as separate families in the stack. The
+     browser does per-codepoint fallback; layering them all under one family
+     name would only add a way for latin-ext overlaps to change ASCII. */
+  --lx-font-ui:
+    'Public Sans', 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans Hebrew', system-ui, -apple-system,
+    'Segoe UI', sans-serif;
+  /* Arabic has no monospace tradition; it falls through to the proportional
+     Noto Sans Arabic on purpose. */
+  --lx-font-mono:
+    'IBM Plex Mono', 'Noto Sans Mono', 'Noto Sans Arabic', ui-monospace, 'SF Mono', Menlo, Consolas,
+    monospace;
+
+  --lx-fs-34: 34px;
+  --lx-fs-28: 28px;
+  --lx-fs-24: 24px;
+  --lx-fs-22: 22px;
+  --lx-fs-20: 20px;
+  --lx-fs-19: 19px;
+  --lx-fs-17: 17px;
+  --lx-fs-15: 15px;
+  --lx-fs-14: 14px;
+  --lx-fs-13-5: 13.5px;
+  --lx-fs-13: 13px;
+  --lx-fs-12-5: 12.5px;
+  --lx-fs-12: 12px;
+  --lx-fs-11-5: 11.5px;
+  --lx-fs-11: 11px;
+  --lx-fs-10-5: 10.5px;
+  --lx-fs-10: 10px;
+  --lx-fs-9-5: 9.5px;
+  --lx-fs-9: 9px;
+  --lx-fs-8-5: 8.5px;
+
+  --lx-fw-400: 400;
+  --lx-fw-500: 500;
+  --lx-fw-600: 600;
+  --lx-fw-700: 700;
+
+  --lx-lh-1: 1;
+  --lx-lh-tight: 1.45;
+  --lx-lh-body: 1.55;
+  --lx-lh-loose: 1.6;
+  --lx-lh-mono: 1.75;
+  --lx-lh-mono-loose: 1.85;
+
+  --lx-track-display: -0.02em;
+  --lx-track-cap-narrow: 0.11em;
+  --lx-track-cap: 0.12em;
+  --lx-track-cap-wide: 0.13em;
+  --lx-track-cap-xwide: 0.14em;
+}

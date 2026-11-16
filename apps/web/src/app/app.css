@@ -1,0 +1,25 @@
+/*
+ * Deviation 1: full-bleed, no macOS window frame. A four-row grid pinned to the
+ * viewport, with the routed area owning its own scrolling.
+ *
+ * The second row is the reload banner (FR-1.5) and is `auto`, so it costs
+ * nothing at all until there is something to say — the component renders no
+ * element when the project is in step with the disk.
+ */
+:host {
+  display: grid;
+  grid-template-rows: var(--lx-h-titlebar) auto 1fr var(--lx-h-statusbar);
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--lx-bg-app);
+  color: var(--lx-text-primary);
+  font-family: var(--lx-font-ui);
+  font-size: var(--lx-fs-13);
+}
+
+.body {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

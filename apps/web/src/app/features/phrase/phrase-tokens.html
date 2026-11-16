@@ -1,0 +1,277 @@
+<header class="head">
+  <div class="head__text">
+    <h1 class="title">Access tokens</h1>
+    <p class="sub">
+      Create tokens in Phrase under Profile › Access tokens. Read access is enough for checkout.
+    </p>
+  </div>
+  <button lx-button type="button" size="sm" class="add" (click)="openAdd()">Add token…</button>
+</header>
+
+@if (error(); as message) {
+  <p class="callout callout--bad" role="alert">{{ message }}</p>
+}
+
+<div class="grid">
+  <div class="list">
+    @for (token of tokens(); track token.id) {
+      @let on = !adding() && token.id === selected()?.id;
+      <button
+        type="button"
+        class="token"
+        [class.token--on]="on"
+        [attr.aria-pressed]="on"
+        (click)="select(token.id)"
+      >
+        <span class="token__note">{{ noteOf(token) }}</span>
+        <span class="token__meta mono">{{ meta(token) }}</span>
+        <span class="token__foot">
+          <span class="region">{{ token.region }}</span>
+          <span class="suffix mono">…{{ token.suffix }}</span>
+          @if (token.status === 'bad') {
+            <span class="token__count bad">Rejected</span>
+          } @else {
+            <span class="token__count">{{ projectCount(token.projects.length) }}</span>
+          }
+        </span>
+      </button>
+    } @empty {
+      @if (loaded()) {
+        <p class="empty">No token yet. Add one to check out tags from Phrase.</p>
+      }
+    }
+    <p class="list__foot">
+      {{ tokens().length }} {{ tokens().length === 1 ? 'token' : 'tokens' }} · stored in ~/.lexi on
+      this machine
+    </p>
+  </div>
+
+  @if (adding()) {
+    <section class="card card--add" aria-label="Add a Phrase token">
+      <h2 class="card__title">Add a Phrase token</h2>
+      <label class="field">
+        <span class="field__label">Note</span>
+        <input
+          class="input"
+          placeholder="What is this token for?"
+          [value]="draftNote()"
+          (input)="draftNote.set($any($event.target).value)"
+        />
+      </label>
+      <label class="field">
+        <span class="field__label">Token</span>
+        <input
+          class="input mono"
+          type="password"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Paste the access token"
+          [value]="draftToken()"
+          (input)="setDraftToken($any($event.target).value)"
+        />
+      </label>
+      <div class="field">
+        <span class="field__label" id="add-region">Data center</span>
+        <span class="region-row">
+          <lx-segmented-control
+            ariaLabelledby="add-region"
+            [options]="REGION_OPTIONS"
+            [value]="draftRegion()"
+            (valueChange)="setDraftRegion($event)"
+          />
+          <span class="host mono">{{ hostOf(draftRegion()) }}</span>
+        </span>
+      </div>
+
+      @if (verified(); as v) {
+        @if (v.ok) {
+          <div class="status status--ok" role="status">
+            <span class="status__line">
+              <span class="tick mono" aria-hidden="true">✓</span>{{ verifiedLine(v) }}
+            </span>
+            <span class="status__projects mono">
+              {{ projectCount(v.projects.length) }}
+              @if (v.projects.length > 0) {
+                : {{ projectNames(v) }}
+              }
+            </span>
+          </div>
+        } @else {
+          <div class="status status--bad" role="alert">
+            <span class="status__line">{{ v.detail || 'Phrase rejected this token.' }}</span>
+          </div>
+        }
+      }
+
+      <div class="actions">
+        <button
+          lx-button
+          type="button"
+          size="sm"
+          class="verify"
+          [disabled]="!canVerify()"
+          (click)="verify()"
+        >
+          {{ verifying() ? 'Verifying…' : 'Verify' }}
+        </button>
+        <span class="actions__hint">{{ saveHint() }}</span>
+        <button lx-button type="button" size="sm" class="push" (click)="cancelAdd()">Cancel</button>
+        <button
+          lx-button
+          type="button"
+          size="sm"
+          variant="primary"
+          class="cta"
+          [disabled]="!canSave()"
+          (click)="save()"
+        >
+          {{ saving() ? 'Saving…' : 'Save token' }}
+        </button>
+      </div>
+    </section>
+  } @else if (selected(); as token) {
+    <section class="card" [attr.aria-label]="noteOf(token)">
+      <div class="field">
+        <label class="field__label" for="token-note">Note</label>
+        <textarea
+          id="token-note"
+          class="input input--area"
+          rows="2"
+          [value]="note()"
+          (input)="note.set($any($event.target).value)"
+          (change)="saveNote()"
+        ></textarea>
+        <span class="field__hint">Shown when you pick a token for a checkout.</span>
+      </div>
+
+      <div class="two">
+        <div class="field">
+          <span class="field__label">Token</span>
+          @if (replacing()) {
+            <span class="replace">
+              <input
+                class="input mono"
+                type="password"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="Paste the new token"
+                aria-label="New token"
+                [value]="replacement()"
+                (input)="replacement.set($any($event.target).value)"
+                (keydown.enter)="saveReplacement()"
+              />
+              <button
+                lx-button
+                type="button"
+                size="sm"
+                [disabled]="replaceBusy() || replacement().trim().length < 8"
+                (click)="saveReplacement()"
+              >
+                {{ replaceBusy() ? 'Checking…' : 'Save' }}
+              </button>
+              <button type="button" class="link" (click)="replacing.set(false)">Cancel</button>
+            </span>
+          } @else {
+            <span class="input input--ro mono">
+              •••• •••• •••• {{ token.suffix }}
+              <button type="button" class="link push" (click)="startReplace()">Replace</button>
+            </span>
+          }
+        </div>
+        <div class="field">
+          <span class="field__label" id="token-region">Data center</span>
+          <span class="region-row">
+            <lx-segmented-control
+              ariaLabelledby="token-region"
+              [options]="REGION_OPTIONS"
+              [value]="token.region"
+              (valueChange)="setRegion($event)"
+            />
+            <span class="host mono">{{ hostOf(token.region) }}</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="three">
+        <div class="fact">
+          <span class="field__label">User</span>
+          <span class="fact__value mono">{{ token.user || '—' }}</span>
+        </div>
+        <div class="fact">
+          <span class="field__label">Organization</span>
+          <span class="fact__value fact__value--ui">{{ token.org || '—' }}</span>
+        </div>
+        <div class="fact">
+          <span class="field__label">Scopes</span>
+          <span class="fact__value mono">{{ token.scopes || '—' }}</span>
+        </div>
+      </div>
+
+      @switch (token.status) {
+        @case ('ok') {
+          <div class="status status--ok" role="status">
+            <span class="status__line">
+              <span class="tick mono" aria-hidden="true">✓</span>Valid · checked
+              {{ when(token.checkedAt) }}
+            </span>
+          </div>
+        }
+        @case ('bad') {
+          <div class="status status--bad" role="status">
+            <span class="status__line">
+              Phrase rejected this token (401) · checked {{ when(token.checkedAt) }}
+            </span>
+            <span class="status__hint">
+              It was probably revoked or expired. Replace it to check out from these projects again.
+            </span>
+          </div>
+        }
+        @default {
+          <div class="status" role="status">
+            <span class="status__line">Not checked yet. Check it to see what it can read.</span>
+          </div>
+        }
+      }
+
+      <div class="projects">
+        <h3 class="label">
+          {{
+            token.status === 'bad'
+              ? 'Projects last seen with this token'
+              : 'Projects this token can read'
+          }}
+        </h3>
+        @if (token.projects.length > 0) {
+          <div class="projects__list">
+            @for (project of token.projects; track project.id) {
+              <div class="project">
+                <span class="project__name">{{ project.name }}</span>
+                <span class="project__meta mono">{{ project.account ?? project.id }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="field__hint">None.</p>
+        }
+      </div>
+
+      <div class="actions">
+        <button lx-button type="button" size="sm" [disabled]="checking()" (click)="checkAgain()">
+          {{ checking() ? 'Checking…' : 'Check again' }}
+        </button>
+        <button lx-button type="button" size="sm" class="remove push" (click)="remove()">
+          Remove token
+        </button>
+      </div>
+    </section>
+  }
+</div>
+
+<aside class="info">
+  <span class="info__mark mono" aria-hidden="true">i</span>
+  <p class="info__text">
+    With a token saved, <span class="mono host-inline">api.phrase.com</span> or
+    <span class="mono host-inline">api.us.app.phrase.com</span> joins the allowed hosts. Lexi only
+    calls it when you check a token or run a checkout; translation itself stays on the local model.
+  </p>
+</aside>

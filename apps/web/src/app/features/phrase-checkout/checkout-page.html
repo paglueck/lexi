@@ -1,0 +1,101 @@
+<lx-checkout-rail />
+
+<div class="main">
+  <header class="head">
+    <h1 class="title">{{ title() }}</h1>
+    <p class="sub">{{ subtitle() }}</p>
+  </header>
+
+  <div class="content">
+    @switch (store.step()) {
+      @case (1) {
+        <lx-step-account />
+      }
+      @case (2) {
+        <lx-step-tag />
+      }
+      @case (3) {
+        <lx-step-destination />
+      }
+      @case (4) {
+        <lx-step-run />
+      }
+    }
+  </div>
+
+  <footer class="foot">
+    <span class="foot__sum">{{ store.footerSummary() }}</span>
+    <span class="foot__actions">
+      @switch (store.phase()) {
+        @case ('done') {
+          <button lx-button type="button" size="sm" (click)="store.restart()">
+            Start another checkout
+          </button>
+          <button
+            lx-button
+            type="button"
+            size="sm"
+            variant="primary"
+            class="cta"
+            [disabled]="opening()"
+            (click)="openProject()"
+          >
+            Open project
+          </button>
+        }
+        @case ('running') {
+          @if (store.canCancel()) {
+            <button lx-button type="button" size="sm" (click)="store.cancel()">Cancel</button>
+          }
+          <button lx-button type="button" size="sm" variant="primary" class="cta" disabled>
+            Checking out…
+          </button>
+        }
+        @case ('failed') {
+          <button lx-button type="button" size="sm" (click)="store.back()">Back</button>
+          <button
+            lx-button
+            type="button"
+            size="sm"
+            variant="primary"
+            class="cta"
+            (click)="store.start()"
+          >
+            Retry
+          </button>
+        }
+        @default {
+          @if (store.step() > 1) {
+            <button lx-button type="button" size="sm" (click)="store.back()">Back</button>
+          }
+          @if (store.step() < 4) {
+            <button lx-button type="button" size="sm" (click)="cancel()">Cancel</button>
+            <button
+              lx-button
+              type="button"
+              size="sm"
+              variant="primary"
+              class="cta"
+              [disabled]="!store.canContinue()"
+              (click)="store.next()"
+            >
+              Continue
+            </button>
+          } @else {
+            <button
+              lx-button
+              type="button"
+              size="sm"
+              variant="primary"
+              class="cta"
+              [disabled]="store.scope() === null || store.selectedLocales().length === 0"
+              (click)="store.start()"
+            >
+              {{ startLabel() }}
+            </button>
+          }
+        }
+      }
+    </span>
+  </footer>
+</div>

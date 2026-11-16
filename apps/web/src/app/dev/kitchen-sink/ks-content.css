@@ -1,0 +1,229 @@
+:host {
+  display: block;
+  padding: 0 var(--lx-sp-32) var(--lx-sp-56);
+  background: var(--lx-bg-app);
+  color: var(--lx-text-primary);
+  font-family: var(--lx-font-ui);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-12);
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--lx-sp-10);
+}
+
+.row__label {
+  width: 96px;
+  flex: none;
+  font-size: var(--lx-fs-10);
+  color: var(--lx-text-faint-2);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-2);
+}
+
+.combo {
+  width: 150px;
+}
+
+.narrow {
+  width: 320px;
+  max-width: 100%;
+}
+
+.full {
+  width: 100%;
+}
+
+.note {
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-faint);
+}
+
+/* ---- swatches ---- */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--lx-sp-6);
+  width: 100%;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-8);
+}
+
+.swatch__chip {
+  width: 26px;
+  height: 18px;
+  flex: none;
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-3);
+}
+
+.swatch__chip--shadow {
+  background: var(--lx-bg-panel);
+}
+
+.swatch__name {
+  font-size: var(--lx-fs-10);
+  color: var(--lx-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- type ---- */
+.type-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lx-sp-16);
+}
+
+.type-row__label {
+  width: 48px;
+  flex: none;
+  font-size: var(--lx-fs-10);
+  color: var(--lx-text-faint-2);
+}
+
+/* ---- rtl sample ---- */
+.rtl-sample {
+  font-size: var(--lx-fs-13-5);
+  line-height: var(--lx-lh-body);
+}
+
+/* ---- stat strip ---- */
+.stat {
+  margin-top: var(--lx-sp-6);
+  font-size: var(--lx-fs-24);
+  font-weight: var(--lx-fw-600);
+  letter-spacing: var(--lx-track-display);
+}
+
+.stat.warn {
+  color: var(--lx-warn);
+}
+
+.stat.danger {
+  color: var(--lx-danger);
+}
+
+/* ---- table ---- */
+.table {
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  overflow: hidden;
+}
+
+.table__head,
+.table__row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr;
+}
+
+.table__head {
+  background: var(--lx-bg-panel);
+  border-bottom: 1px solid var(--lx-border-table);
+}
+
+.table__head > * {
+  padding: var(--lx-sp-8) var(--lx-sp-12);
+  border-right: 1px solid var(--lx-border-row);
+}
+
+.table__row {
+  height: var(--lx-h-row);
+  border-bottom: 1px solid var(--lx-border-row);
+  align-items: center;
+}
+
+.table__row--selected {
+  background: var(--lx-bg-selected);
+  box-shadow: var(--lx-ring-selected);
+}
+
+.table__row--selected .cell--id {
+  color: var(--lx-accent-on-tint);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-7);
+  min-width: 0;
+  padding: 0 var(--lx-sp-12);
+  border-right: 1px solid var(--lx-border-row);
+  font-size: var(--lx-fs-12-5);
+}
+
+.cell--id {
+  font-size: var(--lx-fs-10-5);
+  color: var(--lx-text-subtle);
+}
+
+/* ---- chrome demo ---- */
+.chrome-demo {
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  overflow: hidden;
+}
+
+/* ---- glyphs ---- */
+.glyphs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--lx-sp-8);
+  width: 100%;
+}
+
+.glyph {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lx-sp-8);
+  padding: var(--lx-sp-6) var(--lx-sp-8);
+  border: 1px solid var(--lx-border-row);
+  border-radius: var(--lx-r-6);
+}
+
+.glyph__ui {
+  font-size: var(--lx-fs-14);
+}
+
+.glyph__mono {
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-muted);
+}
+
+.glyph__name {
+  font-size: var(--lx-fs-9-5);
+  color: var(--lx-text-faint-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- measure mode ---- */
+:host-context(.ks-measure) .specimens * {
+  outline: 1px solid color-mix(in srgb, magenta 60%, transparent);
+}
+
+.icon-specimen {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--lx-sp-4);
+  width: 72px;
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-10);
+}

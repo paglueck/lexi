@@ -1,0 +1,108 @@
+<span class="app-name">Lexi</span>
+
+@if (mode() === 'minimal' && label()) {
+  <span class="divider" aria-hidden="true"></span>
+  <span class="project-name">{{ label() }}</span>
+}
+
+@if (mode() !== 'minimal') {
+  <span class="divider" aria-hidden="true"></span>
+  <!--
+    The name becomes a menu once there is a project to act on. In the wizard
+    there is nothing to reload or switch away from yet, and with nothing open
+    the words are a state rather than a control — both keep the plain span.
+  -->
+  @if (mode() === 'full' && project.isOpen()) {
+    <lx-project-menu />
+  } @else {
+    <span class="project-name" [class.project-name--empty]="!project.isOpen()">
+      @if (mode() === 'wizard') {
+        New project
+      } @else {
+        {{ project.name() ?? 'No project' }}
+      }
+    </span>
+  }
+}
+
+@if (mode() === 'full') {
+  <nav class="tabs" aria-label="Main">
+    @for (tab of tabs; track tab.path) {
+      <a
+        class="tab"
+        [routerLink]="tab.path"
+        routerLinkActive="tab--active"
+        #rla="routerLinkActive"
+        [attr.aria-current]="rla.isActive ? 'page' : null"
+        >{{ tab.label }}</a
+      >
+    }
+  </nav>
+}
+
+<span class="lx-spacer"></span>
+
+@if (mode() === 'full' && validated(); as text) {
+  <span class="validated">{{ text }}</span>
+  <button
+    type="button"
+    lx-button
+    size="xs"
+    [disabled]="issues.busy()"
+    (click)="issues.revalidate()"
+  >
+    {{ issues.busy() ? 'Revalidating…' : 'Revalidate' }}
+  </button>
+}
+
+@if (mode() === 'full' && pendingDrafts() > 0) {
+  <a class="pending" routerLink="/review">{{ pendingDrafts() }} machine drafts pending</a>
+}
+
+@if (mode() === 'full' && runningCount() + queuedCount() > 0) {
+  <span class="jobs-running">
+    <span class="jobs-running__dot" aria-hidden="true"></span>
+    {{ runningCount() }} running · {{ queuedCount() }} queued
+  </span>
+}
+
+@if (mode() === 'wizard') {
+  <lx-step-indicator [steps]="wizard.steps" [current]="wizard.step()" />
+}
+
+@if (mode() !== 'wizard' && project.sourceLocale()) {
+  <span class="source-pill">Source: {{ project.sourceLocale() }}</span>
+}
+
+@if (mode() !== 'wizard') {
+  <!--
+    The mock offers no way to reach Settings at all — S7 replaces the tab strip
+    rather than joining it. `⌘,` and the palette reach it too; this is
+    the one route a mouse can see, so it is in the chrome rather than on one screen.
+  -->
+  <a
+    lx-button
+    variant="ghost"
+    size="xs"
+    iconOnly
+    class="gear"
+    routerLink="/settings"
+    routerLinkActive="gear--active"
+    ariaCurrentWhenActive="page"
+    aria-label="Settings"
+    title="Settings (⌘,)"
+  >
+    <lx-icon name="settings" [size]="15" />
+  </a>
+}
+
+@if (mode() !== 'wizard') {
+  @if (save.status() === 'unsaved') {
+    <span class="save save--unsaved">
+      <span class="save__dot" aria-hidden="true"></span>
+      {{ save.unsavedCount() }} unsaved
+    </span>
+  } @else {
+    <span class="save">Saved</span>
+  }
+}

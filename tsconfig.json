@@ -1,0 +1,13 @@
+{
+  // Solution-style root project. It holds no files of its own; `tsc -b` walks the
+  // references. apps/web is deliberately absent: Angular needs moduleResolution
+  // "bundler" and lib DOM, both of which conflict with tsconfig.base.json's
+  // NodeNext / ES2023-only setup. The web app is typechecked separately by
+  // `npm run typecheck:web`.
+  "files": [],
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/xliff" },
+    { "path": "./apps/server" }
+  ]
+}

@@ -1,0 +1,44 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    // The same two the Node half gets from tsconfig.base.json. Both were
+    // missing here until M13, which only surfaced because type-checked lint
+    // called every `xs[i]!` in the app unnecessary — as it was, without them.
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    // Maps the shared wire contract into the Angular TS program, so ngtsc
+    // typechecks it and esbuild never has to guess. @lexi/xliff is deliberately
+    // NOT mapped: its barrel reaches node:crypto and node:fs/promises.
+    "paths": {
+      "@lexi/shared": ["../../packages/shared/src/index.ts"],
+      "@lexi/shared/constants": ["../../packages/shared/src/constants.ts"],
+      "@lexi/shared/termbase-csv": ["../../packages/shared/src/termbase-csv.ts"]
+    },
+    "module": "preserve"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

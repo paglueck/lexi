@@ -1,0 +1,106 @@
+/*
+ * The state -> ramp indirection. The keystone of the whole colour system.
+ *
+ * One block maps each state onto four LOCAL variables, and every consumer —
+ * badge, cell tint, body text — reads only those. That is why LxStateBadge is
+ * one component instead of six, and why error tinting in a 20k-row grid costs
+ * zero JavaScript: it is a cascade side effect of two attribute bindings.
+ *
+ * Keyed on the ENGINE's vocabulary verbatim (packages/xliff/src/state.ts), so
+ * there is no mapping table to drift.
+ *
+ * Loads after semantic.*.css: it references semantic tokens, and the semantic
+ * layer is what differs between themes — so this block is theme-agnostic.
+ */
+
+/* Defaults, so an unknown or missing state degrades quietly rather than
+   rendering an uncoloured box. */
+[data-state],
+[data-tone] {
+  --r-bg: transparent;
+  --r-bd: var(--lx-neutral-tint-border);
+  --r-fg: var(--lx-neutral-on-tint);
+  --r-body: var(--lx-text-secondary);
+}
+
+[data-state='untranslated'] {
+  --r-bg: transparent;
+  --r-bd: var(--lx-neutral-tint-border);
+  --r-fg: var(--lx-neutral-on-tint);
+  --r-body: var(--lx-text-faint);
+}
+
+[data-state='draftMachine'] {
+  --r-bg: var(--lx-warn-tint-bg);
+  --r-bd: var(--lx-warn-tint-border);
+  --r-fg: var(--lx-warn-tint-fg);
+  /* A drafted row must read as provisional at a glance. */
+  --r-body: var(--lx-warn-body-text);
+}
+
+[data-state='needsReview'] {
+  --r-bg: var(--lx-danger-tint-bg);
+  --r-bd: var(--lx-danger-tint-border);
+  --r-fg: var(--lx-danger-tint-fg);
+  --r-body: var(--lx-text-secondary);
+}
+
+[data-state='reviewed'] {
+  --r-bg: var(--lx-accent-tint-bg);
+  --r-bd: var(--lx-accent-tint-border-deep);
+  --r-fg: var(--lx-accent-tint-fg);
+  --r-body: var(--lx-text-secondary);
+}
+
+[data-state='final'] {
+  --r-bg: var(--lx-accent-tint-bg-deep);
+  --r-bd: var(--lx-accent-tint-border-final);
+  --r-fg: var(--lx-accent-tint-fg-deep);
+  --r-body: var(--lx-text-secondary);
+}
+
+/*
+ * A validation error is NOT a sixth state — it is an overlay that can sit on
+ * any of the five. Same specificity (0,1,0) as the rules above and declared
+ * after them, so it wins wherever both apply.
+ */
+[data-error='true'] {
+  --r-bg: var(--lx-danger-tint-bg-deep);
+  --r-bd: var(--lx-danger-tint-border);
+  --r-fg: var(--lx-danger-tint-fg);
+  --r-body: var(--lx-danger-on-tint);
+  background: var(--lx-danger-cell-bg);
+}
+
+/*
+ * Non-state badges (hash id, custom id, ICU, RTL, queued/running/done, DNT)
+ * feed the SAME three variables, so LxBadge and LxStateBadge share one rule set.
+ */
+[data-tone='neutral'] {
+  --r-bg: transparent;
+  --r-bd: var(--lx-neutral-tint-border);
+  --r-fg: var(--lx-text-subtle);
+}
+
+[data-tone='accent'] {
+  --r-bg: var(--lx-accent-tint-bg);
+  --r-bd: var(--lx-accent-tint-border);
+  --r-fg: var(--lx-accent);
+}
+
+[data-tone='warn'] {
+  --r-bg: var(--lx-warn-tint-bg);
+  --r-bd: var(--lx-warn-tint-border);
+  --r-fg: var(--lx-warn);
+}
+
+[data-tone='danger'] {
+  --r-bg: var(--lx-danger-tint-bg);
+  --r-bd: var(--lx-danger-tint-border);
+  --r-fg: var(--lx-danger);
+}
+
+/* The `hash id` / `custom id` badges are outlined, not filled. */
+[data-fill='outline'] {
+  --r-bg: transparent;
+}

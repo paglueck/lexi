@@ -1,0 +1,128 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-14);
+  height: var(--lx-h-titlebar);
+  padding: 0 var(--lx-sp-14);
+  background: var(--lx-bg-titlebar);
+  border-bottom: 1px solid var(--lx-border-chrome);
+}
+
+.app-name {
+  margin-left: var(--lx-sp-6);
+  font-size: var(--lx-fs-12-5);
+  font-weight: var(--lx-fw-600);
+  letter-spacing: 0.02em;
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background: var(--lx-divider);
+}
+
+.project-name {
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-subtle);
+}
+
+.project-name--empty {
+  color: var(--lx-text-faint);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--lx-sp-2);
+  margin-left: var(--lx-sp-16);
+}
+
+.tab {
+  padding: 5px 11px;
+  border-radius: var(--lx-r-6);
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-subtle);
+  text-decoration: none;
+}
+
+.tab--active {
+  background: var(--lx-bg-tab-active);
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.source-pill {
+  padding: 4px 10px;
+  border: 1px solid var(--lx-accent-tint-border);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-accent-tint-bg);
+  color: var(--lx-accent-on-tint);
+  font-size: var(--lx-fs-12);
+}
+
+.jobs-running {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  font-size: var(--lx-fs-12);
+  color: var(--lx-accent);
+}
+
+.jobs-running__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--lx-r-full);
+  background: var(--lx-accent);
+}
+
+.save {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  margin-left: var(--lx-sp-12);
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-faint);
+}
+
+.save--unsaved {
+  color: var(--lx-warn);
+}
+
+.save__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--lx-r-full);
+  background: var(--lx-warn);
+}
+
+.gear {
+  margin-left: var(--lx-sp-8);
+}
+
+/* Beats the ghost variant's own custom properties, which sit on the host. */
+a.gear.gear--active {
+  --b-bg: var(--lx-bg-nav-active);
+  --b-fg: var(--lx-accent-on-tint);
+}
+
+/* S11's "96 machine drafts pending" pill — the way into Review from anywhere. */
+.pending {
+  flex: none;
+  padding: var(--lx-sp-4) var(--lx-sp-10);
+  border: 1px solid var(--lx-warn-tint-border);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-warn-tint-bg);
+  color: var(--lx-warn);
+  font-size: var(--lx-fs-12);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pending:hover {
+  color: var(--lx-warn-on-tint-strong);
+}
+
+.validated {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-12);
+  white-space: nowrap;
+}

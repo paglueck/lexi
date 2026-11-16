@@ -1,0 +1,11 @@
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // 'node' because tokens.spec.ts reads the CSS files off disk — the
+    // token-parity check is a file assertion, not a DOM one.
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src/**/*.d.ts", "src/**/*.spec.ts"]
+}

@@ -1,0 +1,24 @@
+@for (item of chrome.left(); track item.text; let first = $first) {
+  @if (!first) {
+    <span class="hairline" aria-hidden="true"></span>
+  }
+  <span class="item">
+    @if (item.key) {
+      <kbd class="key">{{ item.key }}</kbd>
+    }
+    {{ item.text }}
+  </span>
+}
+
+<span class="lx-spacer"></span>
+
+<span class="shortcuts">
+  @for (item of chrome.right(); track item.text) {
+    <span class="item">
+      @if (item.key) {
+        <kbd class="key">{{ item.key }}</kbd>
+      }
+      {{ item.text }}
+    </span>
+  }
+</span>

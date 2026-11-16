@@ -1,0 +1,348 @@
+<!-- 1. Foundations ------------------------------------------------------- -->
+<lx-ks-section
+  title="Surfaces &amp; ramps"
+  spec="every --lx-* colour token, resolved. An empty swatch means a token the theme does not define."
+>
+  <div class="swatches">
+    @for (name of tokenNames; track name) {
+      <div class="swatch">
+        @if (isShadow(name)) {
+          <span
+            class="swatch__chip swatch__chip--shadow"
+            [style.box-shadow]="'var(' + name + ')'"
+          ></span>
+        } @else {
+          <span class="swatch__chip" [style.background]="'var(' + name + ')'"></span>
+        }
+        <span class="swatch__name lx-mono">{{ name }}</span>
+      </div>
+    }
+  </div>
+</lx-ks-section>
+
+<!-- 2. Type --------------------------------------------------------------- -->
+<lx-ks-section
+  title="Type scale"
+  spec="Public Sans 400/500/600/700 · IBM Plex Mono 400/500 · 34…9px · display tracking -0.02em"
+>
+  <div class="stack">
+    @for (size of typeScale; track size) {
+      <div class="type-row">
+        <span class="type-row__label lx-mono">{{ size }}px</span>
+        <span [style.font-size.px]="size">Translate for the meaning in context</span>
+        <span class="lx-mono" [style.font-size.px]="size">messages.de.xlf</span>
+      </div>
+    }
+    <div class="type-row">
+      <span class="type-row__label lx-mono">tnum</span>
+      <span class="lx-num" style="font-size: 24px; font-weight: 600">0123456789</span>
+      <span class="lx-num" style="font-size: 24px; font-weight: 600">1111111111</span>
+    </div>
+  </div>
+</lx-ks-section>
+
+<!-- 3. State badges ------------------------------------------------------- -->
+<lx-ks-section
+  title="State badges"
+  spec="mono 9px · padding 1px 3px · radius 3px · 1px border · glyph is aria-hidden, full name is sr-only (FR-3.7)"
+>
+  <div class="stack">
+    <div class="row">
+      @for (s of states; track s) {
+        <lx-state-badge [state]="s" />
+      }
+    </div>
+    <div class="row">
+      @for (s of states; track s) {
+        <lx-state-badge [state]="s" error />
+      }
+    </div>
+    <div class="row">
+      <lx-badge tone="warn" outline>hash id</lx-badge>
+      <lx-badge tone="accent" outline>custom id</lx-badge>
+      <lx-badge size="xs">ICU</lx-badge>
+      <lx-badge size="xs">RTL</lx-badge>
+      <lx-badge size="md" tone="accent">running</lx-badge>
+      <lx-badge size="md">queued</lx-badge>
+      <lx-badge size="md" tone="accent">done</lx-badge>
+      <lx-badge tone="danger">4 rejected</lx-badge>
+    </div>
+  </div>
+</lx-ks-section>
+
+<!-- 4. Chips -------------------------------------------------------------- -->
+<lx-ks-section
+  title="Placeholder chips"
+  spec="height 16px (18px in the panel) · padding 0 5px · radius 4px · mono 10px · unicode-bidi: isolate"
+>
+  <div class="stack">
+    <div class="row">
+      <span lx-chip label="{{ '{{ invoiceCount }}' }}"></span>
+      <span lx-chip label="&lt;strong&gt;"></span>
+      <span lx-chip label="&lt;/strong&gt;"></span>
+      <span lx-chip size="panel" label="&lt;br/&gt;"></span>
+      <span lx-chip missing label="INTERPOLATION_1"></span>
+    </div>
+    <p class="note">
+      Component vs. raw markup — these two must be pixel-identical, because the grid renders chips
+      as raw spans for performance. A spec asserts it.
+    </p>
+    <div class="row" id="chip-twins">
+      <span lx-chip label="{{ '{{ user.name }}' }}" id="chip-component"></span>
+      <span class="lx-chip" id="chip-raw">{{ '{{ user.name }}' }}</span>
+    </div>
+    <p class="note">RTL: the chip must not scramble inside Arabic text (FR-3.10).</p>
+    <p dir="rtl" class="rtl-sample">
+      لديك <span lx-chip label="{{ '{{ invoiceCount }}' }}"></span> فواتير في هذه الفترة
+    </p>
+  </div>
+</lx-ks-section>
+
+<!-- 5. Buttons ------------------------------------------------------------ -->
+<lx-ks-section
+  title="Buttons"
+  spec="6 variants × 5 sizes = 11 CSS rules, not 30 — data-variant sets colour, data-size sets geometry"
+>
+  <div class="stack">
+    @for (v of variants; track v) {
+      <div class="row">
+        <span class="row__label lx-mono">{{ v }}</span>
+        @for (s of sizes; track s) {
+          <button type="button" lx-button [variant]="v" [size]="s">{{ s }}</button>
+        }
+        <button type="button" lx-button [variant]="v" size="sm" disabled>disabled</button>
+      </div>
+    }
+  </div>
+</lx-ks-section>
+
+<!-- 5a. Icons and icon buttons (M13) ---------------------------------------- -->
+<lx-ks-section
+  title="Icons"
+  spec="Lucide paths, 24 viewBox, stroke 2, currentColor · icon-only buttons are square at their size's height and always carry aria-label"
+>
+  <div class="stack">
+    <div class="row">
+      @for (name of iconNames; track name) {
+        <span class="icon-specimen" [title]="name">
+          <lx-icon [name]="name" [size]="16" />
+          <span class="lx-mono">{{ name }}</span>
+        </span>
+      }
+    </div>
+    @for (s of iconSizes; track s) {
+      <div class="row">
+        <span class="row__label lx-mono">{{ s }}</span>
+        @for (v of iconVariants; track v) {
+          <button
+            type="button"
+            lx-button
+            [variant]="v"
+            [size]="s"
+            iconOnly
+            [attr.aria-label]="'Delete (' + v + ')'"
+          >
+            <lx-icon name="trash" [size]="s === 'xs' ? 13 : 14" />
+          </button>
+        }
+        <button
+          type="button"
+          lx-button
+          variant="ghost"
+          [size]="s"
+          iconOnly
+          disabled
+          aria-label="Settings (disabled)"
+        >
+          <lx-icon name="settings" [size]="14" />
+        </button>
+        <button type="button" lx-button variant="danger-soft" [size]="s">
+          <lx-icon name="trash" [size]="13" /> Confirm
+        </button>
+        <button type="button" lx-button [size]="s">
+          <lx-icon name="pause" [size]="12" /> Pause
+        </button>
+      </div>
+    }
+  </div>
+</lx-ks-section>
+
+<!-- 6. Controls ----------------------------------------------------------- -->
+<lx-ks-section
+  title="Controls"
+  spec="segmented 2px/r7 · toggle track 30×17 knob 13 · checkbox 13px r3 · radio ring 12px"
+>
+  <div class="stack">
+    <div class="row">
+      <lx-segmented-control [options]="layoutOptions" [(value)]="layout" />
+      <lx-toggle [(checked)]="toggleOn" />
+      <lx-toggle [(checked)]="toggleOff" />
+      <lx-toggle [checked]="true" disabled />
+    </div>
+    <div class="col narrow">
+      <lx-checkbox-row label="Untranslated" [(checked)]="filterA" [count]="140" />
+      <lx-checkbox-row
+        label="Has validation errors"
+        [(checked)]="filterB"
+        [count]="7"
+        countTone="danger"
+      />
+      <lx-checkbox-row label="Machine drafts" [count]="96" />
+    </div>
+    <lx-radio-card-group class="narrow">
+      <lx-radio-card
+        title="OpenAI-compatible"
+        hint="Ollama, LM Studio, llama.cpp, vLLM, Jan"
+        [selected]="true"
+      />
+      <lx-radio-card title="Ollama native" hint="/api/chat" />
+    </lx-radio-card-group>
+  </div>
+</lx-ks-section>
+
+<!-- 7. Fields ------------------------------------------------------------- -->
+<lx-ks-section title="Fields" spec="height 34 (30 sm) · padding 0 12 · radius 7 · mono 12px">
+  <div class="stack">
+    <div class="row">
+      <lx-field label="Base URL" class="narrow">
+        <input lxInput value="http://localhost:11434/v1" />
+      </lx-field>
+      <lx-field label="API key" optional hint="not required for this server" class="narrow">
+        <input lxInput placeholder="not required for this server" />
+      </lx-field>
+    </div>
+    <div class="row">
+      <lx-search-field class="narrow" [(value)]="search" />
+      <button type="button" lx-dropdown>Locale columns: 3 of 10</button>
+      <button type="button" lx-dropdown size="xs">qwen2.5:14b-instruct</button>
+    </div>
+    <div class="row">
+      <!-- S2's locale cell: pick from the list, or type anything. Free text is
+           the requirement (FR-1.3), not a nicety. -->
+      <lx-combobox class="combo" [options]="locales" [(value)]="locale" label="Locale" />
+      <lx-combobox class="combo" [options]="locales" value="" label="Unset locale" invalid />
+    </div>
+  </div>
+</lx-ks-section>
+
+<!-- 8. Bars --------------------------------------------------------------- -->
+<lx-ks-section title="Stacked bars" spec="8px/r3 on the neutral track · 6px and 4px variants">
+  <div class="stack narrow">
+    <lx-stacked-bar [segments]="coverage" [total]="100" />
+    <lx-stacked-bar [segments]="coverage" [total]="100" size="md" />
+    <lx-stacked-bar [segments]="coverage" [total]="100" size="sm" />
+    <lx-stacked-bar
+      [segments]="[{ value: 100, tone: 'accent', label: 'reviewed' }]"
+      [total]="100"
+    />
+    <lx-stacked-bar [segments]="[{ value: 1, tone: 'danger', label: 'errors' }]" [total]="100" />
+  </div>
+</lx-ks-section>
+
+<!-- 9. Hairline grid ------------------------------------------------------ -->
+<lx-ks-section
+  title="Hairline grid"
+  spec="gap 1px over the border colour · cells 16px 18px · radius 9"
+>
+  <div class="full" [lxHairlineGrid]="'repeat(5, 1fr)'">
+    <div>
+      <p class="lx-caption">Units</p>
+      <p class="stat lx-num">4,812</p>
+    </div>
+    <div>
+      <p class="lx-caption">Locales</p>
+      <p class="stat lx-num">10</p>
+    </div>
+    <div>
+      <p class="lx-caption">Note coverage</p>
+      <p class="stat lx-num warn">71%</p>
+    </div>
+    <div>
+      <p class="lx-caption">Custom ids</p>
+      <p class="stat lx-num danger">18%</p>
+    </div>
+    <div>
+      <p class="lx-caption">Open issues</p>
+      <p class="stat lx-num">34</p>
+    </div>
+  </div>
+</lx-ks-section>
+
+<!-- 10. Table rows -------------------------------------------------------- -->
+<lx-ks-section
+  title="Grid rows"
+  spec="34px fixed, single line, ellipsised (deviation 2) · selected row inset 2px rail · error tint is pure CSS"
+>
+  <div class="full table">
+    <div class="table__head">
+      <span class="lx-caption lx-caption--narrow">unit id</span>
+      <span class="lx-caption lx-caption--narrow">source · en-GB</span>
+      <span class="lx-caption lx-caption--narrow">de</span>
+    </div>
+    @for (row of rows; track row.id; let i = $index) {
+      <div
+        class="table__row"
+        [class.table__row--selected]="i === 0"
+        [attr.data-state]="row.state"
+        [attr.data-error]="row.error ? 'true' : null"
+      >
+        <span class="cell cell--id lx-mono lx-truncate">{{ row.id }}</span>
+        <span class="cell lx-truncate">{{ row.source }}</span>
+        <span class="cell">
+          <lx-state-badge [state]="row.state" [error]="!!row.error" />
+          <span class="lx-cell__text lx-truncate">{{ row.source }}</span>
+        </span>
+      </div>
+    }
+  </div>
+</lx-ks-section>
+
+<!-- 11. Surfaces & chrome -------------------------------------------------- -->
+<lx-ks-section
+  title="Nav rows, steps, chrome"
+  spec="title bar 44px · toolbar 42px · status bar 32px"
+>
+  <div class="stack full">
+    <div class="row">
+      <div class="col narrow">
+        <lx-nav-row label="catalog" [count]="1912" />
+        <lx-nav-row label="checkout" [count]="1284" [active]="true" />
+        <lx-nav-row label="settings" [count]="786" />
+      </div>
+      <lx-step-indicator [steps]="['Scan', 'Map locales', 'Source locale']" [current]="1" />
+    </div>
+    <div class="chrome-demo">
+      <lx-title-bar />
+      <lx-toolbar>
+        <lx-segmented-control [options]="layoutOptions" [(value)]="layout" />
+        <button type="button" lx-dropdown size="xs">Locale columns: 3 of 10</button>
+        <span class="lx-spacer"></span>
+        <button type="button" lx-button variant="neutral" size="xs">Copy source → target</button>
+        <button type="button" lx-button variant="primary" size="xs">
+          Draft 140 with local model
+        </button>
+      </lx-toolbar>
+    </div>
+    <div class="row">
+      <button type="button" lx-button variant="secondary" size="sm" (click)="openModal()">
+        Open modal
+      </button>
+    </div>
+  </div>
+</lx-ks-section>
+
+<!-- 12. Glyphs ------------------------------------------------------------- -->
+<lx-ks-section
+  title="Glyphs"
+  spec="every icon is a text character — check that ✓✓ and ↻ actually render in the vendored fonts"
+>
+  <div class="glyphs">
+    @for (g of glyphs; track g[0]) {
+      <div class="glyph">
+        <span class="glyph__ui">{{ g[1] }}</span>
+        <span class="glyph__mono lx-mono">{{ g[1] }}</span>
+        <span class="glyph__name lx-mono">{{ g[0] }}</span>
+      </div>
+    }
+  </div>
+</lx-ks-section>

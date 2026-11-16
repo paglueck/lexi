@@ -1,0 +1,184 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-12);
+  padding: 16px 18px;
+  border-radius: var(--lx-r-9);
+  background: var(--lx-bg-panel);
+  border: 1px solid var(--lx-border-section);
+  cursor: pointer;
+}
+
+:host([data-status='running']),
+:host([data-status='paused']) {
+  border-color: var(--lx-accent-border-soft);
+}
+
+:host([data-status='done']),
+:host([data-status='cancelled']),
+:host([data-status='failed']) {
+  background: var(--lx-bg-modal-footer);
+}
+
+:host([data-selected='true']) {
+  outline: 2px solid var(--lx-accent);
+  outline-offset: -1px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-10);
+}
+
+.number {
+  font-size: var(--lx-fs-11);
+  color: var(--lx-text-faint);
+}
+
+.title {
+  padding: 0;
+  border-radius: var(--lx-r-4);
+  background: none;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-14);
+  font-weight: var(--lx-fw-600);
+  text-align: left;
+}
+
+.note {
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-faint);
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-18);
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-subtle);
+}
+
+.stats [data-tone='strong'] {
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.stats [data-tone='danger'] {
+  color: var(--lx-danger-on-tint);
+}
+
+.stats [data-tone='warn'] {
+  color: var(--lx-warn);
+}
+
+.locales {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--lx-border-section);
+}
+
+.locales > :last-child {
+  border-bottom: none;
+}
+
+.danger {
+  color: var(--lx-danger-on-tint);
+}
+
+.now {
+  display: flex;
+  align-items: baseline;
+  gap: var(--lx-sp-8);
+  min-width: 0;
+}
+
+.now__label {
+  font-size: var(--lx-fs-11);
+  color: var(--lx-text-faint);
+}
+
+.now__id {
+  font-size: var(--lx-fs-11);
+  color: var(--lx-text-muted);
+}
+
+.now__source {
+  overflow: hidden;
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-mono);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.link {
+  padding: 0;
+  background: none;
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-accent-on-tint);
+}
+
+.link:hover {
+  color: var(--lx-text-primary);
+}
+
+button.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+button.link:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.report-error {
+  font-size: var(--lx-fs-11-5);
+}
+
+/* The header's "Review N" with several locales: a menu of them, under it. */
+.review {
+  position: relative;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  padding: var(--lx-sp-4);
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-bg-raised);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 45%);
+}
+
+.menuitem {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  padding: var(--lx-sp-4) var(--lx-sp-8);
+  border-radius: var(--lx-r-5);
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-12-5);
+  text-decoration: none;
+}
+
+.menuitem:hover,
+.menuitem:focus-visible {
+  background: var(--lx-bg-selected);
+}
+
+.menuitem__code {
+  font-weight: var(--lx-fw-600);
+  color: var(--lx-text-primary);
+}
+
+.menuitem__count {
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-faint);
+}

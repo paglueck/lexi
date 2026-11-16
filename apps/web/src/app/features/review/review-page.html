@@ -1,0 +1,198 @@
+<div class="split">
+  <lx-review-queue />
+
+  <div class="surface">
+    @let d = review.detail();
+    @let t = review.target();
+
+    @if (loadError(); as error) {
+      <p class="placeholder placeholder--failed" role="alert">{{ error }}</p>
+    } @else if (!d || !t) {
+      <p class="placeholder" [attr.aria-busy]="review.isLoading()">
+        {{ review.isLoading() ? 'Loading…' : 'Nothing to review — every draft has been decided.' }}
+      </p>
+    } @else {
+      <div class="ctx">
+        <span class="lx-mono id">{{ d.unitId }}</span>
+        <lx-state-badge [state]="t.state" [error]="review.blocked()" size="xs" />
+        <span class="pair">{{ d.sourceLocale }} → {{ t.locale }}</span>
+        <span class="lx-spacer"></span>
+        <span class="pos"
+          >Draft {{ review.openPosition() }} of {{ review.openIds().length }} open</span
+        >
+        <button
+          type="button"
+          lx-button
+          size="xs"
+          iconOnly
+          class="step"
+          aria-label="Previous draft"
+          title="Previous draft (↑)"
+          (click)="review.previous()"
+        >
+          <lx-icon name="chevron-up" [size]="14" />
+        </button>
+        <button
+          type="button"
+          lx-button
+          size="xs"
+          iconOnly
+          class="step"
+          aria-label="Next draft"
+          title="Next draft (↓)"
+          (click)="review.next()"
+        >
+          <lx-icon name="chevron-down" [size]="14" />
+        </button>
+      </div>
+
+      <div class="body">
+        @if (review.complete()) {
+          <lx-review-complete />
+        }
+
+        <div class="pair-cards">
+          <section class="card card--source">
+            <div class="head">
+              <span class="lx-caption">Source · {{ d.sourceLocale }}</span>
+              <span class="meta">{{ sourceChars() }} chars</span>
+            </div>
+            <p class="text">
+              @for (s of d.source; track $index) {
+                @if (s.k === 'p') {
+                  <span lx-chip size="panel" [label]="s.equivText || s.id"></span>
+                } @else if (s.k === 't') {
+                  {{ s.v }}
+                }
+              }
+            </p>
+          </section>
+
+          <section class="card card--draft">
+            <div class="head">
+              <span class="lx-caption draftcap">Draft · {{ t.locale }}</span>
+              <span class="meta draftmeta">
+                {{ t.charCount }} chars
+                @if (lengthDelta(); as delta) {
+                  · {{ delta }}
+                }
+              </span>
+            </div>
+
+            @if (editing()) {
+              <lx-segment-editor
+                [value]="t.segments"
+                [dir]="t.isRtl ? 'rtl' : 'ltr'"
+                [available]="availableIds()"
+                [mode]="settings.editorMode()"
+                (valueChange)="onEdit($event)"
+                (commit)="commitEdit()"
+                (revert)="cancelEdit()"
+              />
+            } @else {
+              <p
+                class="text text--draft"
+                [attr.dir]="t.isRtl && t.segments.length > 0 ? 'rtl' : null"
+                (dblclick)="focusEditor()"
+              >
+                @for (s of t.segments; track $index) {
+                  @if (s.k === 'p') {
+                    <span lx-chip size="panel" [label]="s.equivText || s.id"></span>
+                  } @else if (s.k === 't') {
+                    {{ s.v }}
+                  }
+                } @empty {
+                  <span class="cap">Empty.</span>
+                }
+              </p>
+              <p class="cap">Press <kbd>e</kbd> to correct it in place.</p>
+            }
+          </section>
+        </div>
+
+        <lx-review-diff
+          [previous]="t.previous"
+          [draft]="t.segments"
+          [dir]="t.isRtl ? 'rtl' : null"
+        />
+
+        <lx-review-checks [findings]="t.findings" [isIcu]="d.isIcu" />
+
+        @if (t.reviewReasons.length > 0) {
+          <p class="stored">
+            Previously rejected for: <strong>{{ storedReasons(t.reviewReasons) }}</strong>
+          </p>
+        }
+
+        <lx-reject-reasons [(selected)]="reasons" [(note)]="note" [stored]="t.reviewReasons" />
+
+        @if (drafts.error(); as message) {
+          <p class="failed" role="alert">{{ message }}</p>
+        }
+      </div>
+
+      <div class="actions">
+        <button
+          type="button"
+          lx-button
+          variant="danger-soft"
+          [disabled]="review.busy()"
+          (click)="reject()"
+        >
+          Reject
+        </button>
+        <button type="button" lx-button [disabled]="review.busy()" (click)="redraft()">
+          Re-draft with reason
+        </button>
+        <button
+          type="button"
+          lx-button
+          [disabled]="review.busy() || editing()"
+          (click)="focusEditor()"
+        >
+          Edit
+        </button>
+        <span class="lx-spacer"></span>
+        <button
+          type="button"
+          lx-button
+          [disabled]="review.busy()"
+          (click)="review.acceptNeedsReview()"
+        >
+          Accept &amp; mark needs review
+        </button>
+        <button
+          type="button"
+          lx-button
+          variant="primary"
+          [disabled]="review.busy() || (review.blocked() && !editing())"
+          [title]="
+            review.blocked() && !editing()
+              ? 'A blocking finding has to be corrected, or accepted as Needs review'
+              : 'Accept this draft and move to the next open one'
+          "
+          (click)="accept()"
+        >
+          {{ editing() ? 'Accept edited' : 'Accept & next' }}
+          <span class="chord lx-mono">⌘↩</span>
+        </button>
+      </div>
+
+      <div class="status">
+        <span>
+          Accepting writes <span class="lx-mono">state="translated"</span> and drops the
+          machine-draft marker
+        </span>
+        <span class="lx-spacer"></span>
+        @if (review.editRate(); as rate) {
+          <span class="rate">
+            {{ rate.rate === null ? 'no reviews yet' : rate.rate + '% approved unchanged' }}
+            ({{ rate.approvedClean }}/{{ rate.approvedClean + rate.corrected }})
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <lx-review-context [detail]="review.detail()" [target]="review.target()" />
+</div>

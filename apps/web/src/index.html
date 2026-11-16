@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>Lexi</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+    Replaced by the server on every GET /. Under `ng serve` Vite serves this file
+    verbatim, so the literal placeholder survives — which is exactly how the
+    client detects dev mode and falls back to the fixed dev token.
+  -->
+    <meta name="lexi-token" content="__LEXI_TOKEN__" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="icon.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <script>
+      // Theme before first paint. The only inline script in the app; the server's
+      // CSP pins it by hash. data-theme is already on <html> above so the page is
+      // never unstyled, even if this throws.
+      (function () {
+        try {
+          var stored = localStorage.getItem('lexi.theme');
+          var mode =
+            stored === 'dark' || stored === 'light'
+              ? stored
+              : matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          document.documentElement.setAttribute('data-theme', mode);
+        } catch (e) {
+          /* private window, blocked site data — the dark default in the markup stands */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <lx-root></lx-root>
+  </body>
+</html>

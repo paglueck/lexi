@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-GB" datatype="plaintext" original="ng2.template" target-language="de">
+    <body>
+      <trans-unit id="8f2c1a09b3e7d4562f1a" datatype="html">
+        <source>You have <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ invoiceCount }}"/> invoices<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> in this period</source>
+        <target state="translated">Sie haben <x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/><x id="INTERPOLATION" equiv-text="{{ invoiceCount }}"/> Rechnungen<x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/> in diesem Zeitraum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/settings/billing/billing-summary.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+        <note priority="1" from="description">Summary line above the invoice table on the billing settings page.</note>
+        <note priority="1" from="meaning">billing.period-summary</note>
+      </trans-unit>
+      <trans-unit id="checkout.pay_now" datatype="html">
+        <source>Pay now</source>
+        <target state="translated">Jetzt bezahlen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/checkout/summary.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <note priority="1" from="description">Primary button on the checkout summary.</note>
+      </trans-unit>
+      <trans-unit id="checkout.basket_add" datatype="html">
+        <source>Add to basket</source>
+        <target state="translated">In den Warenkorb</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/catalog/product-card.component.html</context>
+          <context context-type="linenumber">61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="catalog.empty" datatype="html">
+        <source>No products match your filters</source>
+        <target state="translated">Keine Produkte entsprechen Ihren Filtern</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/catalog/catalog-page.component.html</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="55e1cc0d84fa" datatype="html">
+        <source>We couldn't process your payment. Check your card details and try again.</source>
+        <target state="translated">Ihre Zahlung konnte nicht verarbeitet werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/checkout/payment-form.component.html</context>
+          <context context-type="linenumber">120</context>
+        </context-group>
+        <note priority="1" from="description">Error shown when the payment provider declines the card.</note>
+      </trans-unit>
+      <trans-unit id="errors.offline" datatype="html">
+        <source>You're offline. Changes sync when you reconnect.</source>
+        <target state="translated">Sie sind offline. Änderungen werden synchronisiert.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shell/offline-banner.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.billing" datatype="html">
+        <source>Billing</source>
+        <target state="translated">Abrechnung</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/settings/settings-nav.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <note priority="1" from="meaning">settings.nav</note>
+      </trans-unit>
+      <trans-unit id="account.delete" datatype="html">
+        <source>Delete account</source>
+        <target state="translated">Konto löschen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/settings/account.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

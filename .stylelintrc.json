@@ -1,0 +1,41 @@
+{
+  "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "apps/server/public/**",
+    "apps/web/src/styles/base/fonts.css",
+    "design_*/**"
+  ],
+  "rules": {
+    "custom-property-pattern": null,
+    "selector-class-pattern": null,
+    "no-descending-specificity": null,
+    "declaration-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "selector-disallowed-list": ["/::ng-deep/", "/\\/deep\\//"],
+    "value-keyword-case": null,
+    "custom-property-empty-line-before": null,
+    "color-hex-length": null,
+    "alpha-value-notation": null,
+    "color-function-notation": null
+  },
+  "overrides": [
+    {
+      "files": [
+        "apps/web/src/app/**/*.css",
+        "apps/web/src/styles/base/*.css",
+        "apps/web/src/styles/utilities.css",
+        "apps/web/src/styles/tokens/ramps.css",
+        "apps/web/src/styles/tokens/type.css",
+        "apps/web/src/styles/tokens/space.css"
+      ],
+      "rules": {
+        "color-no-hex": true,
+        "declaration-property-value-disallowed-list": {
+          "/.*/": ["/var\\(--p-/"]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+<div class="header">
+  <span class="lx-caption">{{ heading() }}</span>
+  <span class="lx-spacer"></span>
+  @if (showingFlagged()) {
+    <button type="button" class="link" (click)="showAll()">Show all ·</button>
+  }
+  <button type="button" class="link" title="Download this job's run log as JSON" (click)="export()">
+    <lx-icon name="download" [size]="12" />
+    Export
+  </button>
+</div>
+
+@if (filters().length > 2) {
+  <div class="filters" role="group" aria-label="Filter the run log by locale">
+    @for (filter of filters(); track filter.value) {
+      <button
+        type="button"
+        class="filter"
+        [attr.aria-pressed]="filter.active"
+        (click)="setLocale(filter.value)"
+      >
+        {{ filter.label }}
+        <span class="lx-mono filter__count">{{ filter.count }}</span>
+      </button>
+    }
+  </div>
+}
+
+<div class="entries">
+  @for (line of importLines(); track line.id) {
+    <div class="import-line">{{ line.text }}</div>
+  }
+  @for (view of views(); track view.entry.seq) {
+    <div class="entry" [attr.data-archetype]="view.archetype">
+      <div class="row">
+        <lx-badge [tone]="view.badge.tone" [outline]="view.badge.outline" size="xs">{{
+          view.badge.glyph
+        }}</lx-badge>
+        <span class="lx-mono locale">{{ view.entry.locale }}</span>
+        <span class="lx-mono unit-id">{{ view.unitId }}</span>
+        <span class="lx-spacer"></span>
+        @if (view.latency) {
+          <span class="lx-mono latency">{{ view.latency }}</span>
+        }
+      </div>
+      @if (view.body) {
+        <!-- auto: the body is the model's translation, in whatever script the
+             entry's locale is written in, or an English rejection reason. -->
+        <div class="body" dir="auto">{{ view.body }}</div>
+      }
+      @if (view.meta) {
+        <div class="meta">{{ view.meta }}</div>
+      }
+    </div>
+  } @empty {
+    <p class="empty" [class.empty--locale]="jobs.logLocale() !== 'all'">{{ emptyText() }}</p>
+  }
+</div>

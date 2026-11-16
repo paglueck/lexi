@@ -1,0 +1,163 @@
+<div class="row">
+  <span class="lx-mono number">#{{ job().number }}</span>
+  <button
+    type="button"
+    class="title"
+    [attr.aria-pressed]="selected()"
+    (click)="selectFromKeyboard($event)"
+  >
+    {{ title() }}
+  </button>
+  <lx-job-status-chip [status]="job().status" />
+  <span class="lx-spacer"></span>
+  @if (expanded()) {
+    @if (job().status === 'running') {
+      <button type="button" lx-button size="xs" (click)="pause($event)">
+        <lx-icon name="pause" [size]="12" />
+        Pause
+      </button>
+    } @else {
+      <button type="button" lx-button size="xs" (click)="resume($event)">
+        <lx-icon name="play" [size]="12" />
+        Resume
+      </button>
+    }
+    <button type="button" lx-button variant="danger-soft" size="xs" (click)="cancel($event)">
+      <lx-icon name="stop" [size]="12" />
+      Cancel
+    </button>
+  } @else if (queued()) {
+    <span class="note">{{ queuedNote() }}</span>
+    <button type="button" lx-button size="xs" (click)="remove($event)">Remove</button>
+  } @else {
+    <span class="note">{{ finishedMeta() }}</span>
+    @if (reviewLocales().length === 1) {
+      <a
+        lx-button
+        size="xs"
+        routerLink="/review"
+        [queryParams]="{ job: job().id, locale: reviewLocales()[0]!.locale }"
+        title="Review the drafts this job wrote"
+        (click)="$event.stopPropagation()"
+      >
+        Review {{ reviewLocales()[0]!.count }}
+      </a>
+    } @else if (reviewLocales().length > 1) {
+      <span class="review">
+        <button
+          type="button"
+          lx-button
+          size="xs"
+          aria-haspopup="menu"
+          [attr.aria-expanded]="reviewOpen()"
+          title="Review the drafts this job wrote, one locale at a time"
+          (click)="toggleReview($event)"
+        >
+          Review {{ job().pendingReview }}
+          <lx-icon name="chevron-down" [size]="12" />
+        </button>
+        @if (reviewOpen()) {
+          <div
+            class="menu"
+            lxMenu
+            aria-label="Review a locale"
+            (lxMenuClose)="reviewOpen.set(false)"
+          >
+            @for (r of reviewLocales(); track r.locale) {
+              <a
+                role="menuitem"
+                class="menuitem"
+                routerLink="/review"
+                [queryParams]="{ job: job().id, locale: r.locale }"
+                (click)="pickReview($event)"
+              >
+                <span class="menuitem__code">{{ r.locale }}</span>
+                <span class="lx-spacer"></span>
+                <span class="lx-mono lx-num menuitem__count">{{ r.count }}</span>
+              </a>
+            }
+          </div>
+        }
+      </span>
+    }
+    @if (hasReport()) {
+      <button
+        type="button"
+        lx-button
+        size="xs"
+        title="The HTML review report, or the translations as CSV for a reviewer in the market"
+        [disabled]="reportBusy()"
+        (click)="downloadReport($event)"
+      >
+        <lx-icon name="download" [size]="12" />
+        Export
+      </button>
+      <button
+        type="button"
+        lx-button
+        size="xs"
+        title="Bring a reviewer's edited CSV back into the project"
+        [disabled]="importBusy()"
+        (click)="chooseImport($event)"
+      >
+        Import reviewed CSV…
+      </button>
+      <input
+        #importFile
+        type="file"
+        class="sr-only"
+        accept=".csv,text/csv"
+        multiple
+        tabindex="-1"
+        aria-hidden="true"
+        (click)="$event.stopPropagation()"
+        (change)="onImportFiles($event)"
+      />
+    }
+    <button
+      type="button"
+      lx-button
+      size="xs"
+      title="Take this job off the list. Its run log and report stay on disk."
+      (click)="remove($event)"
+    >
+      Remove
+    </button>
+  }
+</div>
+
+<lx-stacked-bar [segments]="segments()" [total]="totals().total" size="md" />
+
+<div class="stats">
+  @for (stat of stats(); track $index) {
+    <span [attr.data-tone]="stat.tone">{{ stat.text }}</span>
+  }
+  @if (showFlaggedLink()) {
+    <span class="lx-spacer"></span>
+    <button type="button" class="link" (click)="showFlagged($event)">Show flagged units</button>
+  }
+</div>
+
+<div class="locales">
+  @for (loc of job().locales; track loc.locale) {
+    <lx-job-locale-row [job]="job()" [loc]="loc" [rtl]="isRtl(loc.locale)" />
+  }
+</div>
+
+@if (current(); as now) {
+  <div class="now">
+    <span class="lx-mono now__label">now: {{ now.locale }}</span>
+    <span class="lx-mono now__id">{{ now.unitId }}</span>
+    @if (currentSource(); as source) {
+      <span class="now__source" dir="auto">“{{ source }}”</span>
+    }
+  </div>
+}
+
+@if (reportError(); as error) {
+  <div class="danger report-error" role="alert">{{ error }}</div>
+}
+
+@if (importError(); as error) {
+  <div class="danger report-error" role="alert">{{ error }}</div>
+}

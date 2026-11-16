@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist/types",
+    // Production runs the esbuild bundle, not tsc output. Emitting declarations
+    // only keeps `composite` happy (which forbids noEmit) without leaving a
+    // second, confusing JS tree next to dist/main.js.
+    "emitDeclarationOnly": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  // Load-bearing, not decoration: composite projects reject a cross-project
+  // import without a declared reference (TS6307). With it, TypeScript's
+  // source-of-project-reference redirect gives live types and no build step.
+  "references": [{ "path": "../../packages/shared" }, { "path": "../../packages/xliff" }]
+}

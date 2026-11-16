@@ -1,0 +1,336 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* The mock's `1fr 360px`. The rail is fixed; the main column flexes. */
+.page {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr var(--lx-w-dash-rail);
+  min-width: 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-24);
+  min-width: 0;
+  padding: var(--lx-sp-28) var(--lx-sp-32);
+  overflow-y: auto;
+}
+
+.section {
+  margin: 0;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-15);
+  font-weight: var(--lx-fw-600);
+}
+
+/* ---- stat strip ---------------------------------------------------------- */
+
+/* `gap: 1px` over a border-coloured background, so the gaps read as hairlines. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1px;
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  background: var(--lx-border-table);
+  overflow: hidden;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-6);
+  padding: var(--lx-sp-16) var(--lx-sp-18);
+  background: var(--lx-bg-titlebar);
+}
+
+.stat__value {
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-24);
+  font-weight: var(--lx-fw-600);
+  letter-spacing: var(--lx-track-display);
+}
+
+.stat__value[data-tone='warn'] {
+  color: var(--lx-warn);
+}
+
+.stat__value[data-tone='danger'] {
+  color: var(--lx-danger);
+}
+
+.stat__sub {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+/* ---- coverage table ------------------------------------------------------ */
+
+.coverage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-12);
+}
+
+.coverage__head {
+  display: flex;
+  gap: var(--lx-sp-16);
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: flex;
+  gap: var(--lx-sp-14);
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legend__item {
+  display: flex;
+  gap: var(--lx-sp-6);
+  align-items: center;
+  color: var(--lx-text-muted);
+  font-size: var(--lx-fs-11-5);
+}
+
+.legend__swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legend__swatch[data-tone='accent'] {
+  background: var(--lx-accent-bar);
+}
+
+.legend__swatch[data-tone='warn'] {
+  background: var(--lx-warn-bar);
+}
+
+.legend__swatch[data-tone='danger'] {
+  background: var(--lx-danger-bar);
+}
+
+.legend__swatch[data-tone='track'] {
+  background: var(--lx-neutral-track);
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  overflow: hidden;
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: 110px 1fr 90px 90px 90px 160px;
+  align-items: center;
+  min-height: var(--lx-h-row-dash);
+  border-bottom: 1px solid var(--lx-border-row);
+}
+
+.tr:last-child {
+  border-bottom: 0;
+}
+
+.tr--head {
+  min-height: 0;
+  background: var(--lx-bg-titlebar);
+}
+
+.th,
+.td {
+  padding: var(--lx-sp-10) var(--lx-sp-14);
+}
+
+.th {
+  color: var(--lx-text-faint);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+  letter-spacing: var(--lx-track-cap);
+  text-transform: uppercase;
+}
+
+.th--num,
+.td--num {
+  text-align: right;
+}
+
+.td {
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-12);
+}
+
+.td--locale {
+  display: flex;
+  gap: var(--lx-sp-8);
+  align-items: center;
+}
+
+.locale {
+  font-size: var(--lx-fs-13);
+  font-weight: var(--lx-fw-600);
+}
+
+.pct {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11);
+}
+
+.td--review {
+  color: var(--lx-danger);
+}
+
+.td--orphans {
+  color: var(--lx-text-muted);
+}
+
+/*
+ * Nothing to report should not read as a warning. A column of coral zeros is
+ * how a table teaches people to stop reading it, and this one has to stay
+ * scannable at ten locales.
+ */
+.td--num[data-zero] {
+  /*
+   * `muted`, not one of the `faint` tiers: a zero is still a figure somebody
+   * reads, so it drops out of the alarm colour without dropping out of the
+   * contrast budget.
+   */
+  color: var(--lx-text-muted);
+}
+
+.td--action {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--lx-sp-6);
+}
+
+.done {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+/* ---- needs-attention rail ------------------------------------------------ */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-22);
+  padding: var(--lx-sp-28) var(--lx-sp-26);
+  border-left: 1px solid var(--lx-border-chrome);
+  background: var(--lx-bg-rail);
+  overflow-y: auto;
+}
+
+.issues {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.issue {
+  display: flex;
+  gap: var(--lx-sp-12);
+  align-items: flex-start;
+  padding: var(--lx-sp-14) 0;
+  border-bottom: 1px solid var(--lx-border-row);
+}
+
+.issue:last-child {
+  border-bottom: 0;
+}
+
+.issue .lx-badge {
+  flex: none;
+  margin-top: 1px;
+}
+
+.issue__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+  min-width: 0;
+}
+
+.issue__title {
+  margin: 0;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-13);
+  font-weight: var(--lx-fw-600);
+}
+
+.issue__text {
+  margin: 0;
+  color: var(--lx-text-muted);
+  font-size: var(--lx-fs-12-5);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* A link, not a button: it is a navigation inside a paragraph of prose. */
+.issue__action {
+  align-self: flex-start;
+  margin-top: var(--lx-sp-2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--lx-accent);
+  font: inherit;
+  font-size: var(--lx-fs-12);
+  font-weight: var(--lx-fw-600);
+  cursor: pointer;
+}
+
+.issue__action:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.issue__action:disabled {
+  color: var(--lx-text-faint);
+  cursor: default;
+}
+
+/* The ring token is a box-shadow, not a colour — as an outline it was dropped. */
+.issue__action:focus-visible {
+  border-radius: var(--lx-r-4);
+  box-shadow: var(--lx-ring-focus);
+}
+
+.last-save {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+  margin-top: auto;
+  padding-top: var(--lx-sp-18);
+  border-top: 1px solid var(--lx-border-row);
+}
+
+.last-save__line {
+  margin: 0;
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-12-5);
+}
+
+.last-save__note {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+  line-height: 1.5;
+}
+
+.stat__link {
+  color: var(--lx-accent);
+}
