@@ -14,10 +14,10 @@
     "dist:linux": "node ../../scripts/stage-desktop.mjs linux x64 && electron-builder --linux --x64 --publish never"
   },
   "devDependencies": {
-    "electron": "44.8.0",
-    "electron-builder": "26.15.3"
+    "electron": "45.3.3",
+    "electron-builder": "26.18.0"
   },
   "dependencies": {
-    "electron-updater": "6.8.10"
+    "electron-updater": "6.8.11"
   }
 }
