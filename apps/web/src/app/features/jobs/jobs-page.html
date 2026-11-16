@@ -1,0 +1,48 @@
+<div class="queue">
+  <div class="queue__header">
+    <span class="lx-caption">Queue</span>
+    @if (jobs.loaded()) {
+      <span class="queue__count"
+        >{{ jobs.unfinished().length }} active · {{ jobs.completed().length }} finished</span
+      >
+    }
+    <span class="lx-spacer"></span>
+    <div class="queue__actions" role="toolbar" aria-label="Queue actions">
+      <button
+        type="button"
+        lx-button
+        size="xs"
+        title="Take every done, cancelled or failed job off the list. Their run logs and reports stay on disk."
+        [disabled]="jobs.completed().length === 0 || clearing()"
+        (click)="clearFinished()"
+      >
+        Clear finished
+      </button>
+    </div>
+  </div>
+  @if (clearError(); as error) {
+    <p class="failed" role="alert">{{ error }}</p>
+  }
+
+  @for (job of jobs.ordered(); track job.id) {
+    <lx-job-card [job]="job" />
+  }
+  @if (jobs.error(); as error) {
+    <p class="failed" role="alert">{{ error }}</p>
+  } @else if (!jobs.loaded()) {
+    <p class="empty" aria-busy="true">Loading the job queue…</p>
+  } @else if (jobs.jobs().length === 0) {
+    <p class="empty">
+      No jobs yet. "Translate..." in the grid's toolbar picks the locales and queues one job for all
+      of them here.
+    </p>
+  }
+
+  <p class="footer">
+    Each locale uses its own Term Base entries and style guide. Every draft lands in
+    <span class="footer__accent">Draft (machine)</span> state and is never written as final. Skipped
+    locales stay untouched and can be put back while the job is still running.
+  </p>
+</div>
+
+<lx-run-log-panel />

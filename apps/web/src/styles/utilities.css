@@ -1,0 +1,14 @@
+/* Layout shorthands used often enough that spelling them out is noise. */
+.lx-row {
+  display: flex;
+  align-items: center;
+}
+
+.lx-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.lx-spacer {
+  margin-left: auto;
+}

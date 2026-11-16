@@ -1,0 +1,232 @@
+<header class="head">
+  <div class="head__title">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      @if (fromGrid) {
+        <a routerLink="/grid">Grid</a>
+      } @else {
+        <a routerLink="/jobs">Jobs</a>
+        @if (jobCrumb(); as crumb) {
+          <span aria-hidden="true">/</span>
+          <span>{{ crumb }}</span>
+        }
+      }
+    </nav>
+    <h1 class="title">Import reviewed CSV</h1>
+  </div>
+  <span class="head__divider" aria-hidden="true"></span>
+  @if (preview(); as p) {
+    <div class="files">
+      @for (file of p.files; track $index) {
+        <div class="file">
+          <div class="file__line">
+            <span class="file__name lx-mono">{{ file.name }}</span>
+            <span class="file__meta"
+              >{{ file.rowCount }} {{ file.rowCount === 1 ? 'row' : 'rows' }} · UTF-8 ·
+              {{ file.delimiter === ';' ? 'semicolon' : 'comma' }}-separated</span
+            >
+          </div>
+          <div class="file__cols lx-mono">
+            @for (col of file.columns; track $index) {
+              @if (col.recognised) {
+                <span class="col">{{ col.name }}</span>
+              } @else {
+                <span class="col col--ignored">{{ col.name }} · ignored</span>
+              }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+  <div class="head__end">
+    @if (preview()) {
+      <span class="baseline">{{ baseline() }}</span>
+    }
+    <button type="button" lx-button size="xs" class="choose" [disabled]="busy()" (click)="choose()">
+      Choose another file…
+    </button>
+    <input
+      #picker
+      type="file"
+      class="sr-only"
+      accept=".csv,text/csv"
+      multiple
+      tabindex="-1"
+      aria-hidden="true"
+      (change)="onFiles($event)"
+    />
+  </div>
+</header>
+
+@if (preview()) {
+  <div class="body">
+    <section class="pane" aria-label="CSV rows">
+      @if (undone()) {
+        <div class="banner" role="status">
+          <span>{{ undoneText() }}</span>
+          <button type="button" class="banner__link lx-spacer" (click)="leave()">
+            {{ backLabel }}
+          </button>
+        </div>
+      } @else if (result(); as r) {
+        <div class="banner" role="status">
+          <span>{{ appliedText() }}</span>
+          <button
+            type="button"
+            class="banner__action undo lx-spacer"
+            [disabled]="sending()"
+            (click)="undo(r.importId)"
+          >
+            Undo import
+          </button>
+          <button type="button" class="banner__link" (click)="leave()">{{ backLabel }}</button>
+        </div>
+      }
+      @if (failure() || pendingUndo()) {
+        <div class="banner banner--error" role="alert">
+          <div class="banner__lines">
+            @if (failure(); as message) {
+              <span>{{ message }}</span>
+            }
+            @if (pendingUndo(); as partial) {
+              <span
+                >Some files were written:
+                <button
+                  type="button"
+                  class="banner__action undo"
+                  [disabled]="sending()"
+                  (click)="undo(partial.importId)"
+                >
+                  Undo import
+                </button></span
+              >
+              @if (partial.notWritten.length > 0) {
+                <span class="lx-mono banner__files"
+                  >Not written: {{ partial.notWritten.join(', ') }}</span
+                >
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <div class="toolbar">
+        <div class="tabs" role="group" aria-label="Show">
+          @for (tab of tabs; track tab.value) {
+            <button
+              type="button"
+              class="tab"
+              [class.tab--active]="filter() === tab.value"
+              [attr.aria-pressed]="filter() === tab.value"
+              (click)="filter.set(tab.value)"
+            >
+              {{ tab.label }}
+              <span class="tab__count lx-mono" [attr.data-tone]="countTone(tab.value)">{{
+                tabCounts()[tab.value]
+              }}</span>
+            </button>
+          }
+        </div>
+        <lx-segmented-control
+          class="switch lx-spacer"
+          ariaLabel="Locale"
+          [options]="locales()"
+          [(value)]="localeFilter"
+        />
+        <lx-segmented-control
+          class="switch"
+          ariaLabel="Diff view"
+          [options]="views"
+          [(value)]="view"
+        />
+      </div>
+
+      @if (filter() === 'conflict' && !applied()) {
+        <div class="bulk">
+          <span>These units changed in Lexi after the export.</span>
+          <button type="button" class="bulk__link lx-spacer" (click)="resolveAll('csv')">
+            Use CSV for all
+          </button>
+          <button type="button" class="bulk__link" (click)="resolveAll('current')">
+            Keep current for all
+          </button>
+        </div>
+      }
+
+      <div class="colhead lx-mono" aria-hidden="true">
+        <span></span>
+        <span>Locale</span>
+        <span>Unit</span>
+        @if (view() === 'split') {
+          <span class="colhead__split"><span>In Lexi</span><span>In CSV</span></span>
+        } @else {
+          <span>Change · Lexi → CSV</span>
+        }
+        <span>Status</span>
+      </div>
+
+      @if (filter() === 'same') {
+        <p class="unchanged">{{ unchangedText() }}</p>
+      } @else {
+        <div
+          class="rows"
+          role="listbox"
+          tabindex="0"
+          aria-label="CSV rows"
+          [attr.aria-activedescendant]="selected() ? optionId(selected()!) : null"
+          (keydown)="onKey($event)"
+        >
+          @for (row of visible(); track row.key) {
+            <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus --
+               aria-activedescendant: the listbox is the one focus stop and
+               answers the keys, so an option is deliberately not focusable. -->
+            <div
+              lx-import-row
+              role="option"
+              [id]="optionId(row)"
+              [attr.aria-selected]="row.key === selected()?.key"
+              [row]="row"
+              [chip]="chipFor(row)"
+              [view]="view()"
+              [invalidLocale]="invalidLocale(row)"
+              (click)="select(row)"
+              (includeToggle)="toggleInclude(row)"
+            ></div>
+          }
+        </div>
+      }
+    </section>
+
+    <aside class="detail" aria-label="Selected row">
+      @if (selected(); as row) {
+        <lx-import-detail
+          [row]="row"
+          [chip]="chipFor(row)"
+          [sourceLocale]="sourceLocale() ?? ''"
+          [exportedAt]="exportedAt()"
+          [readOnly]="applied()"
+          (includeToggle)="toggleInclude(row)"
+          (resolve)="resolve(row, $event)"
+        />
+      }
+    </aside>
+  </div>
+  <lx-import-footer
+    [(state)]="targetState"
+    [(finalizeUnchanged)]="finalizeUnchanged"
+    [finalizable]="finalizable()"
+    [summary]="summary()"
+    [label]="applyState().label"
+    [ready]="applyState().ready"
+    [resolving]="openConflicts().length > 0"
+    [applied]="applied()"
+    [busy]="sending()"
+    [blocked]="applyBlocked()"
+    (leave)="leave()"
+    (apply)="apply()"
+  />
+} @else if (busy()) {
+  <p class="status" aria-busy="true">Reading the CSV…</p>
+} @else if (error(); as message) {
+  <p class="status status--failed" role="alert">{{ message }}</p>
+}

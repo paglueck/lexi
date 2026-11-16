@@ -1,0 +1,196 @@
+<div class="page">
+  <div class="main">
+    <!-- FR-2.3 + FR-4.4 + FR-2.5b: the five figures that describe the project. -->
+    <section class="stats" aria-label="Project figures">
+      <div class="stat">
+        <span class="lx-caption">Units</span>
+        <span class="stat__value lx-num">{{ n(health().units) }}</span>
+      </div>
+      <div class="stat">
+        <span class="lx-caption">Locales</span>
+        <span class="stat__value lx-num">{{ n(project.targetLocales().length) }}</span>
+        <span class="stat__sub">source {{ project.sourceLocale() }}</span>
+      </div>
+      <div class="stat">
+        <span class="lx-caption">Note coverage</span>
+        <span class="stat__value lx-num" [attr.data-tone]="noteTone()"
+          >{{ health().noteCoverage }}%</span
+        >
+        <span class="stat__sub">{{ n(health().unitsWithNote) }} of {{ n(health().units) }}</span>
+      </div>
+      <div class="stat">
+        <span class="lx-caption">Custom ids</span>
+        <span class="stat__value lx-num" [attr.data-tone]="customIdTone()"
+          >{{ health().customIdShare }}%</span
+        >
+        <span class="stat__sub">{{ n(health().customIdUnits) }} of {{ n(health().units) }}</span>
+      </div>
+      <div class="stat">
+        <span class="lx-caption">Open issues</span>
+        <span
+          class="stat__value lx-num"
+          [attr.data-tone]="health().errorCells > 0 ? 'danger' : null"
+          >{{ n(health().errorCells) }}</span
+        >
+        <span class="stat__sub">
+          @if (health().warningCells > 0) {
+            {{ n(health().warningCells) }} warnings ·
+          }
+          <a class="stat__link" routerLink="/issues">View in Issues</a>
+        </span>
+      </div>
+      <!-- FR-7.4, requirements §10's headline metric: the share of machine drafts a
+           reviewer approved with no correction, once there is anything to
+           measure it from. -->
+      <div class="stat">
+        <span class="lx-caption">Reviewed without edit</span>
+        @if (editRate().rate === null) {
+          <span class="stat__value lx-num">—</span>
+          <span class="stat__sub">Nothing reviewed yet</span>
+        } @else {
+          <span class="stat__value lx-num" [attr.data-tone]="editRateTone()"
+            >{{ editRate().rate }}%</span
+          >
+          <span class="stat__sub"
+            >{{ n(editRate().approvedClean) }} of {{ n(editRate().total) }}</span
+          >
+        }
+      </div>
+    </section>
+
+    <section class="coverage">
+      <header class="coverage__head">
+        <h2 class="section">Progress by locale</h2>
+        <ul class="legend">
+          @for (item of LEGEND; track item.tone) {
+            <li class="legend__item">
+              <span class="legend__swatch" [attr.data-tone]="item.tone"></span>
+              {{ item.label }}
+            </li>
+          }
+        </ul>
+      </header>
+
+      <div class="table" role="table">
+        <div class="tr tr--head" role="row">
+          <span class="th" role="columnheader">Locale</span>
+          <span class="th" role="columnheader">Coverage</span>
+          <span class="th th--num" role="columnheader">Missing</span>
+          <span class="th th--num" role="columnheader">Review</span>
+          <span class="th th--num" role="columnheader">Orphans</span>
+          <span class="th" role="columnheader"><span class="sr-only">Actions</span></span>
+        </div>
+
+        @for (locale of project.targetLocales(); track locale.locale) {
+          <div class="tr" role="row">
+            <span class="td td--locale" role="cell">
+              <span class="locale">{{ locale.locale }}</span>
+              @if (locale.isRtl) {
+                <lx-badge outline size="xs">RTL</lx-badge>
+              }
+              <span class="pct lx-num">{{ pct(locale) }}%</span>
+            </span>
+            <span class="td" role="cell">
+              <lx-stacked-bar [segments]="segments(locale)" [total]="locale.unitCount" />
+            </span>
+            <span
+              class="td td--num lx-num lx-mono"
+              role="cell"
+              [attr.data-zero]="locale.missing === 0 ? '' : null"
+              >{{ n(locale.missing) }}</span
+            >
+            <span
+              class="td td--num lx-num lx-mono td--review"
+              role="cell"
+              [attr.data-zero]="locale.needsReview + locale.draftMachine === 0 ? '' : null"
+              >{{ n(locale.needsReview + locale.draftMachine) }}</span
+            >
+            <span
+              class="td td--num lx-num lx-mono td--orphans"
+              role="cell"
+              [attr.data-zero]="locale.orphans === 0 ? '' : null"
+              >{{ n(locale.orphans) }}</span
+            >
+            <span class="td td--action" role="cell">
+              @if (locale.untranslated > 0) {
+                <button
+                  type="button"
+                  lx-button
+                  variant="accent-soft"
+                  size="xs"
+                  (click)="openUntranslated(locale.locale)"
+                >
+                  {{ n(locale.untranslated) }} untranslated →
+                </button>
+              }
+              @if (locale.needsReview + locale.draftMachine > 0) {
+                <button type="button" lx-button size="xs" (click)="openReview(locale.locale)">
+                  Review {{ n(locale.needsReview + locale.draftMachine) }} →
+                </button>
+              }
+              @if (locale.untranslated === 0 && locale.needsReview + locale.draftMachine === 0) {
+                <span class="done">complete</span>
+              }
+            </span>
+          </div>
+        } @empty {
+          <div class="tr" role="row">
+            <span class="td" role="cell">No target locales were mapped.</span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <aside class="rail" aria-label="Needs attention">
+    <h2 class="section">Needs attention</h2>
+
+    <ul class="issues">
+      @for (item of attention(); track item.key) {
+        <li class="issue">
+          <span class="lx-badge" [attr.data-tone]="item.tone" aria-hidden="true">{{
+            item.glyph
+          }}</span>
+          <div class="issue__body">
+            <p class="issue__title">{{ item.title }}</p>
+            <p class="issue__text">{{ item.text }}</p>
+            @if (item.action) {
+              <button
+                type="button"
+                class="issue__action"
+                [disabled]="events.reloading()"
+                (click)="item.action.run()"
+              >
+                {{ item.action.label }}
+              </button>
+            }
+          </div>
+        </li>
+      } @empty {
+        <li class="issue issue--calm">
+          <span class="lx-badge" data-tone="accent" aria-hidden="true">✓</span>
+          <div class="issue__body">
+            <p class="issue__title">Nothing needs attention</p>
+            <p class="issue__text">
+              No validation errors, no files changed on disk, and every unit carries a note.
+            </p>
+          </div>
+        </li>
+      }
+    </ul>
+
+    <!-- FR-1.6, made visible: unchanged files are never rewritten. -->
+    <footer class="last-save">
+      <span class="lx-caption">Last save</span>
+      @if (save.lastSaveAt(); as at) {
+        <p class="last-save__line">
+          {{ n(save.lastSaveWritten() ?? 0) }} of {{ n(project.files().length) }} files rewritten ·
+          {{ time(at) }}
+        </p>
+        <p class="last-save__note">Unchanged files were left untouched.</p>
+      } @else {
+        <p class="last-save__note">Nothing has been saved in this session.</p>
+      }
+    </footer>
+  </aside>
+</div>

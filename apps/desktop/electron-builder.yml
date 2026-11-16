@@ -1,0 +1,90 @@
+# Installers for people who should not need Node, npm or a terminal.
+# Built from the staging folder that scripts/stage-desktop.mjs prepares.
+appId: io.github.paglueck.lexi
+productName: Lexi
+copyright: Copyright © 2026 Patrick Glück
+
+directories:
+  app: .stage/app
+  output: release
+  # Icons, generated from build/icon-source.png by scripts/generate-icons.py.
+  buildResources: build
+
+asar: true
+
+toolsets:
+  # The legacy default (NSIS 3.0.4.1) ships an x86_64-only makensis for macOS,
+  # which fails with "Bad CPU type" on Apple Silicon without Rosetta. The 3.12
+  # bundle runs natively.
+  nsis: 1.2.1
+
+extraResources:
+  # LICENSE (GPLv3), NOTICE.txt and the third-party notices travel with every
+  # installer; stage-desktop.mjs collects them.
+  - from: .stage/legal
+    to: legal
+  # The server lives outside the asar: the Copilot SDK spawns a native runtime
+  # from its own package folder, and a binary inside an asar cannot be executed.
+  - from: .stage/server
+    to: server
+  # electron-builder drops node_modules from a FileSet unless it is named
+  # outright, and the Copilot SDK is the one runtime dependency the bundle has.
+  - from: .stage/server/node_modules
+    to: server/node_modules
+    filter: ['**/*']
+
+# The update feed (apps/desktop/updater.mjs). Builds write latest.yml,
+# latest-mac.yml and latest-linux.yml next to the installers;
+# .github/workflows/release.yml attaches them, the installers and the
+# .blockmap files to a GitHub release. GitHub redirects
+# releases/latest/download/<file> to the newest non-prerelease release, so the
+# feed and the download links on the website never change.
+# build/release-notes.md goes into the yml and is what the update dialog shows
+# as "what's new".
+publish:
+  provider: generic
+  url: https://github.com/paglueck/lexi/releases/latest/download/
+
+mac:
+  target:
+    - target: dmg
+      arch: arm64
+    # Not used yet: the ad-hoc signed app updates by DMG. It is what Squirrel.Mac
+    # installs from once the build is Developer ID signed (MAC_MODE = 'auto').
+    - target: zip
+      arch: arm64
+  category: public.app-category.developer-tools
+  # No version in the file names: the website links to
+  # releases/latest/download/<name>, which has to stay the same across
+  # releases. The cost is that differential downloads fall back to full ones.
+  artifactName: Lexi-mac-arm64.${ext}
+  icon: build/icon.icns
+  # Ad-hoc signed, not Developer ID signed: Apple Silicon refuses to run a
+  # bundle with no sealed signature at all and calls it "damaged", while an
+  # ad-hoc one only needs the one-time right-click → Open (see README).
+  identity: '-'
+  # Hardened runtime is only needed for notarization. With an ad-hoc identity
+  # its library validation would refuse to load koffi.node (Copilot SDK).
+  hardenedRuntime: false
+
+win:
+  icon: build/icon.ico
+  artifactName: Lexi-Setup-x64.${ext}
+  target:
+    - target: nsis
+      arch: x64
+
+linux:
+  icon: build/icon.png
+  category: Development
+  artifactName: Lexi-linux-x86_64.${ext}
+  target:
+    - target: AppImage
+      arch: x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico

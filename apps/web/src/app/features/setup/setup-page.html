@@ -1,0 +1,175 @@
+<div class="wizard">
+  @if (scan(); as result) {
+    <header class="head">
+      <div class="head__titles">
+        <h1 class="head__title">
+          {{ result.files.length }} XLIFF file{{ result.files.length === 1 ? '' : 's' }} found
+        </h1>
+        <p class="head__path lx-mono">
+          {{ result.root }} · scanned recursively in {{ (result.durationMs / 1000).toFixed(1) }} s
+        </p>
+      </div>
+
+      @if (conflicts().length; as count) {
+        <p class="warnpill">
+          <lx-badge tone="warn" outline>!</lx-badge>
+          <span>
+            {{ count }} file{{ count === 1 ? "'s" : "s'" }}
+            <code class="lx-mono">target-language</code> disagree{{ count === 1 ? 's' : '' }} with
+            its filename
+          </span>
+        </p>
+      }
+    </header>
+
+    @if (wizard.step() === 1) {
+      <div class="table" role="table" aria-label="File to locale mapping">
+        <div class="tr tr--head" role="row">
+          <span class="th" role="columnheader">File</span>
+          <span class="th" role="columnheader">Locale</span>
+          <span class="th" role="columnheader">target-language</span>
+          <span class="th th--num" role="columnheader">Units</span>
+          <span class="th" role="columnheader">Notes</span>
+        </div>
+
+        @for (row of rows(); track row.file.path + row.file.fileIndex) {
+          <div
+            class="tr"
+            role="row"
+            [class.tr--source]="row.file.isTemplate"
+            [class.tr--warn]="row.file.conflictingTargetLanguage !== null"
+          >
+            <span class="td td--file lx-mono" role="cell">
+              {{ row.file.relPath }}
+              @if (row.file.isRtl) {
+                <lx-badge outline size="xs">RTL</lx-badge>
+              }
+            </span>
+
+            <span class="td td--locale" role="cell">
+              <lx-combobox
+                [options]="localeOptions()"
+                [value]="row.locale"
+                (valueChange)="setLocale(row, $event)"
+                [label]="'Locale for ' + row.file.relPath"
+                [invalid]="row.locale === ''"
+              />
+              @if (row.file.isTemplate) {
+                <span class="td__source">source</span>
+              }
+            </span>
+
+            <span class="td td--attr lx-mono" role="cell">
+              @if (row.file.conflictingTargetLanguage; as stale) {
+                <span class="stale">{{ stale }}</span>
+              } @else {
+                {{ row.file.targetLanguage ?? '—' }}
+              }
+            </span>
+
+            <span class="td td--num lx-mono lx-num" role="cell">
+              {{ row.file.unitCount.toLocaleString() }}
+            </span>
+
+            <span class="td td--note" role="cell">
+              <span [class.note--source]="row.file.isTemplate">{{ note(row.file) }}</span>
+              @if (row.file.conflictingTargetLanguage !== null) {
+                <button
+                  lx-button
+                  variant="warn-soft"
+                  size="xs"
+                  type="button"
+                  [attr.aria-pressed]="row.fixTargetLanguage"
+                  (click)="toggleFix(row)"
+                >
+                  {{ row.fixTargetLanguage ? '✓ Fixing to ' + row.locale : 'Fix to ' + row.locale }}
+                </button>
+              }
+            </span>
+          </div>
+        }
+      </div>
+    } @else if (wizard.step() === 2) {
+      <section class="source">
+        <h2 class="source__title">Which locale defines the keys?</h2>
+        <p class="source__hint">
+          The source locale is the truth for which keys should exist. Every gap Lexi reports is
+          measured against it, and it can be changed later.
+        </p>
+
+        <lx-radio-card-group class="cards">
+          @for (locale of sourceCandidates(); track locale) {
+            <lx-radio-card
+              [title]="locale"
+              [hint]="
+                locale === scan()?.suggestedSourceLocale
+                  ? 'The extraction template\'s language — Angular regenerates this file on every build.'
+                  : 'Use this locale as the source instead.'
+              "
+              [selected]="sourceLocale() === locale"
+              (click)="sourceLocale.set(locale)"
+            />
+          }
+        </lx-radio-card-group>
+      </section>
+    } @else if (wizard.step() === 3) {
+      <section class="source">
+        <h2 class="source__title">Connect to Phrase?</h2>
+        <p class="source__hint">
+          Optional. Connected, the project menu's <strong>Push to Phrase</strong> uploads your files
+          after you have added and translated keys. You can also connect later from the project
+          menu.
+        </p>
+        <lx-phrase-connect (finished)="finish()" />
+      </section>
+    }
+
+    @if (error(); as message) {
+      <p class="error" role="alert">{{ message }}</p>
+    }
+
+    @if (wizard.step() !== 3) {
+      <footer class="foot">
+        <p class="foot__note">
+          Any mapping can be overridden here.
+          <code class="lx-mono">original="ng2.template"</code> is ignored — Angular writes it on
+          every file.
+        </p>
+        <div class="foot__actions">
+          <button lx-button variant="secondary" size="md" type="button" (click)="back()">
+            Back
+          </button>
+          @if (wizard.step() === 1) {
+            <button
+              lx-button
+              variant="primary"
+              size="md"
+              type="button"
+              [disabled]="mappedCount() === 0"
+              (click)="toStep(2)"
+            >
+              Confirm {{ mappedCount() }} mapping{{ mappedCount() === 1 ? '' : 's' }}
+            </button>
+          } @else {
+            <button
+              lx-button
+              variant="primary"
+              size="md"
+              type="button"
+              [disabled]="!canConfirm() || sourceLocale() === ''"
+              (click)="confirm()"
+            >
+              {{ busy() ? 'Opening…' : 'Open project' }}
+            </button>
+          }
+        </div>
+      </footer>
+    }
+  } @else {
+    @if (error(); as message) {
+      <p class="loading" role="alert">{{ message }}</p>
+    } @else {
+      <p class="loading" aria-busy="true">Scanning…</p>
+    }
+  }
+</div>

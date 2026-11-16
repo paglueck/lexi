@@ -1,0 +1,297 @@
+<div class="page">
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Style guides">
+      <!-- Global is a persistent pill, unlike every locale tab: it exists the
+           moment a project is open, whether or not global.md has been written
+           yet — a guide that has never been saved still has to be reachable to
+           get its first sentence written. -->
+      <button
+        type="button"
+        role="tab"
+        class="tab tab--global"
+        id="guide-tab-global"
+        aria-controls="guide-panel"
+        [class.tab--active]="store.active() === GLOBAL_GUIDE_KEY"
+        [attr.aria-selected]="store.active() === GLOBAL_GUIDE_KEY"
+        [attr.tabindex]="store.active() === GLOBAL_GUIDE_KEY ? 0 : -1"
+        (click)="selectGuide(GLOBAL_GUIDE_KEY)"
+        (keydown)="onTabKey($event)"
+      >
+        Global
+      </button>
+      @for (guide of store.guides(); track guide.key) {
+        @if (guide.key !== GLOBAL_GUIDE_KEY) {
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            aria-controls="guide-panel"
+            [id]="'guide-tab-' + guide.key"
+            [class.tab--active]="guide.key === store.active()"
+            [attr.aria-selected]="guide.key === store.active()"
+            [attr.tabindex]="guide.key === store.active() ? 0 : -1"
+            (click)="selectGuide(guide.key)"
+            (keydown)="onTabKey($event)"
+          >
+            {{ guide.key }}
+          </button>
+        }
+      }
+    </div>
+
+    <!-- Outside .tabs on purpose: that strip scrolls, and an absolutely
+         positioned menu is clipped by its scrollport however high its
+         z-index. The design draws one flat row here, not a nested one. -->
+    <div class="addwrap">
+      <button
+        type="button"
+        class="add"
+        aria-haspopup="menu"
+        title="Add a style guide for another locale"
+        [disabled]="store.missing().length === 0"
+        [attr.aria-expanded]="localesMenuOpen()"
+        (click)="localesMenuOpen.set(!localesMenuOpen())"
+      >
+        <lx-icon name="plus" [size]="12" />
+        locale
+      </button>
+      @if (localesMenuOpen()) {
+        <div
+          class="menu"
+          lxMenu
+          aria-label="Add a locale guide"
+          (lxMenuClose)="localesMenuOpen.set(false)"
+        >
+          @for (locale of store.missing(); track locale) {
+            <button type="button" role="menuitem" class="menuitem" (click)="addLocale(locale)">
+              {{ locale }}
+            </button>
+          } @empty {
+            <span class="menuempty">Every target locale already has a guide.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="meta">
+      <span class="path lx-mono" [attr.title]="store.path()">{{ store.path() }}</span>
+      <lx-shared-source-control
+        kind="styleguides"
+        [path]="store.dir()"
+        [linked]="store.linked()"
+        [available]="store.available()"
+        (changed)="store.load()"
+      />
+      <span class="pill" [class.pill--over]="store.budget().over">
+        <span class="lx-num">{{ store.budget().total.toLocaleString() }}</span> tokens ·
+        {{ store.budget().over ? 'exceeds' : 'fits' }}
+        <span class="lx-num">{{ store.budget().window.toLocaleString() }}</span> window
+      </span>
+    </div>
+  </div>
+
+  <div class="body">
+    <section
+      class="editor"
+      id="guide-panel"
+      role="tabpanel"
+      [attr.aria-labelledby]="activeTabId()"
+      [attr.aria-label]="
+        activeTabId() === null ? 'Style guide · ' + store.active() + ' (new)' : null
+      "
+    >
+      <div class="head">
+        <span class="lx-caption">Markdown</span>
+        <div class="actions">
+          @if (store.canSeed()) {
+            <button type="button" lx-button size="xs" (click)="store.seed()">
+              Use starter template
+            </button>
+          }
+          @if (store.dirty()) {
+            <button type="button" lx-button size="xs" (click)="store.revert()">Revert</button>
+          }
+          @if (store.active() !== GLOBAL_GUIDE_KEY && store.open()?.exists) {
+            <button type="button" lx-button size="xs" variant="danger-soft" (click)="deleteGuide()">
+              <lx-icon name="trash" [size]="12" />
+              {{ armedGuideDelete() ? 'Confirm delete' : 'Delete' }}
+            </button>
+          }
+          <button
+            type="button"
+            lx-button
+            size="xs"
+            variant="primary"
+            [disabled]="!store.dirty() || store.saving()"
+            (click)="store.save()"
+          >
+            {{ store.saving() ? 'Saving…' : 'Save' }}
+          </button>
+        </div>
+      </div>
+      @if (store.changedOnDisk()) {
+        <p class="stale" role="status">
+          This guide changed in the shared folder while you were editing it.
+          <button type="button" lx-button size="xs" variant="warn-soft" (click)="store.revert()">
+            Reload and discard my edit
+          </button>
+        </p>
+      }
+      <textarea
+        lxInput
+        class="input lx-mono"
+        spellcheck="false"
+        autocomplete="off"
+        placeholder="Write this guide in Markdown — headings, paragraphs, lists, quotes and tables all render in the preview."
+        aria-label="Style guide Markdown"
+        [attr.dir]="guideDir()"
+        [value]="store.buffer()"
+        (input)="store.edit($any($event.target).value)"
+      ></textarea>
+      @if (store.error(); as error) {
+        <p class="err" role="alert">{{ error }}</p>
+      }
+    </section>
+
+    <section class="preview">
+      <span class="lx-caption">Preview</span>
+      <div class="rendered" [attr.dir]="guideDir()" [attr.aria-busy]="store.preview.isLoading()">
+        @if (store.preview.error()) {
+          <p class="err" role="alert">The preview could not be rendered. {{ previewError() }}</p>
+        } @else if (store.blocks().length === 0) {
+          <p class="empty">
+            {{ store.preview.isLoading() ? 'Rendering…' : 'Nothing written yet.' }}
+          </p>
+        }
+        @for (block of store.blocks(); track $index) {
+          @switch (block.kind) {
+            @case ('heading') {
+              <div class="heading" [attr.data-level]="block.level">
+                @for (span of block.lines[0] ?? []; track $index) {
+                  <ng-container
+                    [ngTemplateOutlet]="spanTpl"
+                    [ngTemplateOutletContext]="{ $implicit: span }"
+                  />
+                }
+              </div>
+            }
+            @case ('quote') {
+              <blockquote class="quote">
+                @for (line of block.lines; track $index) {
+                  <p>
+                    @for (span of line; track $index) {
+                      <ng-container
+                        [ngTemplateOutlet]="spanTpl"
+                        [ngTemplateOutletContext]="{ $implicit: span }"
+                      />
+                    }
+                  </p>
+                }
+              </blockquote>
+            }
+            @case ('list') {
+              @if (block.ordered) {
+                <ol class="list">
+                  @for (line of block.lines; track $index) {
+                    <li>
+                      @for (span of line; track $index) {
+                        <ng-container
+                          [ngTemplateOutlet]="spanTpl"
+                          [ngTemplateOutletContext]="{ $implicit: span }"
+                        />
+                      }
+                    </li>
+                  }
+                </ol>
+              } @else {
+                <ul class="list">
+                  @for (line of block.lines; track $index) {
+                    <li>
+                      @for (span of line; track $index) {
+                        <ng-container
+                          [ngTemplateOutlet]="spanTpl"
+                          [ngTemplateOutletContext]="{ $implicit: span }"
+                        />
+                      }
+                    </li>
+                  }
+                </ul>
+              }
+            }
+            @case ('table') {
+              <table class="table">
+                <thead>
+                  <tr>
+                    @for (cell of block.cells[0] ?? []; track $index) {
+                      <th [attr.data-align]="block.align[$index] ?? 'none'">
+                        @for (span of cell; track $index) {
+                          <ng-container
+                            [ngTemplateOutlet]="spanTpl"
+                            [ngTemplateOutletContext]="{ $implicit: span }"
+                          />
+                        }
+                      </th>
+                    }
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (row of block.cells.slice(1); track $index) {
+                    <tr>
+                      @for (cell of row; track $index) {
+                        <td [attr.data-align]="block.align[$index] ?? 'none'">
+                          @for (span of cell; track $index) {
+                            <ng-container
+                              [ngTemplateOutlet]="spanTpl"
+                              [ngTemplateOutletContext]="{ $implicit: span }"
+                            />
+                          }
+                        </td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            }
+            @case ('code') {
+              <pre class="code lx-mono">{{ block.lines[0]?.[0]?.text ?? '' }}</pre>
+            }
+            @case ('rule') {
+              <hr class="rule" />
+            }
+            @default {
+              <p class="para">
+                @for (span of block.lines[0] ?? []; track $index) {
+                  <ng-container
+                    [ngTemplateOutlet]="spanTpl"
+                    [ngTemplateOutletContext]="{ $implicit: span }"
+                  />
+                }
+              </p>
+            }
+          }
+        }
+      </div>
+    </section>
+  </div>
+</div>
+
+<ng-template #spanTpl let-span>
+  @if (span.href !== null) {
+    <a [href]="span.href" target="_blank" rel="noopener noreferrer">{{ span.text }}</a>
+  } @else {
+    @switch (span.style) {
+      @case ('strong') {
+        <b>{{ span.text }}</b>
+      }
+      @case ('em') {
+        <i>{{ span.text }}</i>
+      }
+      @case ('code') {
+        <code class="lx-mono">{{ span.text }}</code>
+      }
+      @default {
+        {{ span.text }}
+      }
+    }
+  }
+</ng-template>

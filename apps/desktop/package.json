@@ -1,0 +1,23 @@
+{
+  "name": "@lexi/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "author": "Patrick Glück",
+  "description": "Lexi as a desktop app",
+  "type": "module",
+  "main": "main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:mac": "node ../../scripts/stage-desktop.mjs darwin arm64 && electron-builder --mac --arm64 --publish never",
+    "dist:win": "node ../../scripts/stage-desktop.mjs win32 x64 && electron-builder --win --x64 --publish never",
+    "dist:linux": "node ../../scripts/stage-desktop.mjs linux x64 && electron-builder --linux --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.8.0",
+    "electron-builder": "26.15.3"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.10"
+  }
+}

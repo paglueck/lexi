@@ -1,0 +1,493 @@
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- toolbar --------------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lx-sp-12);
+  height: 44px;
+  padding: 0 var(--lx-sp-14);
+  border-bottom: 1px solid var(--lx-border-section);
+  background: var(--lx-bg-panel);
+}
+
+.filters {
+  display: flex;
+  gap: var(--lx-sp-2);
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-7);
+  padding: 5px 11px;
+  border-radius: var(--lx-r-6);
+  background: transparent;
+  color: var(--lx-text-subtle);
+  font-size: var(--lx-fs-12);
+}
+
+.filter--active {
+  background: var(--lx-bg-segment-active);
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.filter-count {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-10-5);
+  font-weight: var(--lx-fw-400);
+}
+
+.search {
+  width: 240px;
+  height: 28px;
+  padding: 0 var(--lx-sp-10);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-bg-rail);
+  color: var(--lx-text-primary);
+  font-family: var(--lx-font-ui);
+  font-size: var(--lx-fs-12);
+}
+
+.toolbar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-12);
+  margin-left: auto;
+}
+
+.path {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11);
+  /* A linked folder's path is absolute and can be long; the title holds all of it. */
+  max-width: 36ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- body ------------------------------------------------------------------- */
+
+.body {
+  position: relative;
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) var(--lx-w-termbase-editor);
+  min-height: 0;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border-right: 1px solid var(--lx-border-section);
+}
+
+.grid {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  outline: none;
+}
+
+.grid:focus-visible {
+  box-shadow: inset var(--lx-ring-focus);
+}
+
+/* Tracks and minimum width come from the component, set once on .grid so the
+   header and every row read the same values. */
+.row {
+  display: grid;
+  grid-template-columns: var(--tb-cols);
+  min-width: var(--tb-min-width);
+  min-height: 48px;
+  border-bottom: 1px solid var(--lx-border-row);
+  font-size: var(--lx-fs-12-5);
+  cursor: pointer;
+}
+
+.row:not(.row--head):hover {
+  background: var(--lx-bg-cell);
+}
+
+.row--selected,
+.row--selected:not(.row--head):hover {
+  background: var(--lx-bg-selected);
+}
+
+.row--head {
+  position: sticky;
+  top: 0;
+  /* Above the pinned term cells of the rows scrolling under it. */
+  z-index: 2;
+  min-height: 0;
+  border-bottom-color: var(--lx-border-table);
+  background: var(--lx-bg-panel);
+  cursor: default;
+}
+
+.th {
+  padding: var(--lx-sp-8) var(--lx-sp-12);
+  color: var(--lx-text-faint);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-9-5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* The term column stays pinned while the locales scroll under it, so it needs
+   an opaque background that follows the row's state. */
+.th--term,
+.cell--term {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  border-right: 1px solid var(--lx-border-row);
+  background: var(--lx-bg-app);
+}
+
+.th--term {
+  padding: var(--lx-sp-8) var(--lx-sp-14);
+  background: var(--lx-bg-panel);
+}
+
+.row:not(.row--head):hover .cell--term {
+  background: var(--lx-bg-cell);
+}
+
+.row--selected .cell--term,
+.row--selected:not(.row--head):hover .cell--term {
+  background: var(--lx-bg-selected);
+}
+
+.th--dnt {
+  text-align: center;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  min-width: 0;
+  padding: var(--lx-sp-8) var(--lx-sp-12);
+}
+
+.cell--term {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--lx-sp-2);
+  padding: var(--lx-sp-8) var(--lx-sp-14);
+}
+
+.term {
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.term--untitled {
+  color: var(--lx-text-faint-2);
+}
+
+.note {
+  max-width: 100%;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11);
+  overflow-wrap: anywhere;
+}
+
+.cell--dnt {
+  justify-content: center;
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--lx-neutral-tint-border);
+  border-radius: var(--lx-r-4);
+  background: transparent;
+  color: var(--lx-warn);
+  font-size: var(--lx-fs-10);
+  line-height: 1;
+}
+
+.check--on {
+  border-color: var(--lx-warn-tint-border);
+  background: var(--lx-warn-tint-bg);
+}
+
+/* Shown in full: long translations wrap inside their column, never truncate. */
+.tr {
+  min-width: 0;
+  color: var(--lx-text-mono);
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+.tr--source {
+  color: var(--lx-text-faint);
+}
+
+.same {
+  flex: none;
+  padding: 0 var(--lx-sp-4);
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-3);
+  color: var(--lx-text-subtle);
+  font-size: var(--lx-fs-9);
+}
+
+.dnt-badge {
+  flex: none;
+  padding: 1px var(--lx-sp-4);
+  border: 1px solid var(--lx-warn-tint-border);
+  border-radius: var(--lx-r-3);
+  background: var(--lx-warn-tint-bg);
+  color: var(--lx-warn);
+  font-size: var(--lx-fs-9);
+}
+
+.kept {
+  color: var(--lx-text-subtle);
+}
+
+/* Sticks just right of the pinned term column, so a DNT row still says so
+   when the table is scrolled sideways past its start. */
+.merged-label {
+  position: sticky;
+  left: calc(var(--tb-term-width) + var(--lx-sp-12));
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--lx-sp-32) var(--lx-sp-14);
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-12-5);
+}
+
+.footnote {
+  flex: none;
+  margin: 0;
+  padding: var(--lx-sp-14);
+  border-top: 1px solid var(--lx-border-row);
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+  line-height: var(--lx-lh-body);
+}
+
+/* ---- editor ----------------------------------------------------------------- */
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-20);
+  min-height: 0;
+  padding: var(--lx-sp-20) var(--lx-sp-22);
+  overflow-y: auto;
+  background: var(--lx-bg-rail);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-7);
+}
+
+.label {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-10);
+  letter-spacing: var(--lx-track-cap-wide);
+  text-transform: uppercase;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.input {
+  height: 32px;
+  padding: 0 var(--lx-sp-10);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-bg-panel);
+  color: var(--lx-text-secondary);
+  font-family: var(--lx-font-ui);
+  font-size: var(--lx-fs-12-5);
+}
+
+.input--term {
+  height: 36px;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-15);
+  font-weight: var(--lx-fw-600);
+}
+
+.dnt-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--lx-sp-12);
+  padding: var(--lx-sp-12) var(--lx-sp-14);
+  border: 1px solid var(--lx-border-section);
+  border-radius: var(--lx-r-8);
+  background: var(--lx-bg-panel);
+  text-align: left;
+  cursor: pointer;
+}
+
+.dnt-card:focus-visible {
+  box-shadow: var(--lx-ring-focus);
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: var(--lx-r-9);
+  background: var(--lx-border-strong);
+}
+
+.knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--lx-r-full);
+  background: var(--lx-text-subtle);
+}
+
+.switch--on {
+  background: var(--lx-warn);
+}
+
+.switch--on .knob {
+  left: 17px;
+  background: var(--lx-bg-app);
+}
+
+.dnt-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+}
+
+.dnt-title {
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-13);
+  font-weight: var(--lx-fw-600);
+}
+
+.dnt-desc {
+  color: var(--lx-text-subtle);
+  font-size: var(--lx-fs-12);
+  line-height: 1.5;
+}
+
+.locales {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-8);
+}
+
+.locale {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--lx-sp-10);
+  align-items: center;
+}
+
+.locale-id {
+  display: flex;
+  flex-direction: column;
+}
+
+.locale-code {
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-12-5);
+  font-weight: var(--lx-fw-600);
+}
+
+.locale-name {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-10-5);
+}
+
+.stored {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.prompt {
+  margin: 0;
+  padding: var(--lx-sp-10) var(--lx-sp-12);
+  border: 1px solid var(--lx-border-section);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-bg-panel);
+  color: var(--lx-accent-on-tint);
+  font-size: var(--lx-fs-11-5);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.editor-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--lx-sp-14);
+  border-top: 1px solid var(--lx-border-row);
+}
+
+.delete {
+  color: var(--lx-danger-on-tint);
+}
+
+.saves {
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.editor-empty {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-12-5);
+}
+
+.failed {
+  position: absolute;
+  right: var(--lx-sp-16);
+  bottom: var(--lx-sp-16);
+  z-index: 3;
+  margin: 0;
+  padding: var(--lx-sp-8) var(--lx-sp-12);
+  border: 1px solid var(--lx-danger-tint-border);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-danger-cell-bg);
+  color: var(--lx-danger);
+  font-size: var(--lx-fs-12);
+}

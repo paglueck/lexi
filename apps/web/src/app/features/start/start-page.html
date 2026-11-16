@@ -1,0 +1,134 @@
+<div class="menu">
+  <header class="wordmark">
+    <h1 class="wordmark__name">Lexi</h1>
+    @if (project.version()) {
+      <span class="wordmark__version lx-mono">v{{ project.version() }}</span>
+    }
+  </header>
+
+  <div class="cards">
+    @if (last(); as recent) {
+      @if (recent.exists) {
+        <button type="button" class="card card--primary" [disabled]="busy()" (click)="continue()">
+          <span class="card__body">
+            <span class="card__title">Continue with {{ recent.name }}</span>
+            <span class="card__meta">
+              <span class="card__path lx-mono">{{ short(recent.path) }}</span>
+              <span class="card__stats">
+                {{ recent.localeCount }} locale{{ recent.localeCount === 1 ? '' : 's' }} ·
+                {{ count(recent.unitCount) }} units · opened {{ when(recent.openedAt) }}
+              </span>
+            </span>
+            <lx-stacked-bar
+              class="card__bar"
+              size="sm"
+              [segments]="segments(recent)"
+              [total]="100"
+            />
+          </span>
+          <kbd class="chip chip--primary lx-mono">↵</kbd>
+        </button>
+      } @else {
+        <div class="card card--primary card--missing" role="group" aria-label="Last project">
+          <span class="card__body">
+            <span class="card__title">Continue with {{ recent.name }}</span>
+            <span class="card__meta">
+              <span class="card__path lx-mono">{{ short(recent.path) }}</span>
+              <span class="card__missing" role="status">Folder not found</span>
+            </span>
+            <span class="card__fix">
+              <button lx-button type="button" size="xs" (click)="locate(recent)">Locate…</button>
+              <button lx-button type="button" size="xs" variant="ghost" (click)="forget(recent)">
+                Remove from recent
+              </button>
+            </span>
+          </span>
+        </div>
+      }
+    }
+
+    <a class="card" routerLink="/phrase/checkout">
+      <span class="card__body">
+        <span class="card__title">Check out from Phrase</span>
+        <span class="card__desc">
+          Fetch every key, or the keys of one or more tags, and set them up as a local XLIFF
+          project, ready to translate.
+        </span>
+      </span>
+      <kbd class="chip lx-mono">⌘⇧P</kbd>
+    </a>
+
+    <button type="button" class="card" [disabled]="busy()" (click)="openFolder()">
+      <span class="card__body">
+        <span class="card__title">{{ busy() ? 'Opening…' : 'Open a project…' }}</span>
+        <span class="card__desc">
+          Choose a folder with <code class="ext lx-mono">.xlf</code> files. New folders continue in
+          the setup wizard.
+        </span>
+      </span>
+      <kbd class="chip lx-mono">⌘O</kbd>
+    </button>
+  </div>
+
+  @if (actions.openError() ?? error(); as message) {
+    <p class="error" role="alert">{{ message }}</p>
+  }
+  @if (recentsFailed()) {
+    <p class="error" role="alert">The recent projects could not be loaded.</p>
+  }
+
+  @if (rest().length > 0) {
+    <section class="recent" aria-labelledby="recent-label">
+      <h2 class="recent__label lx-mono" id="recent-label">Recent</h2>
+      <ul class="recent__list">
+        @for (recent of rest(); track recent.id) {
+          <li class="recent__item">
+            <button
+              type="button"
+              class="row"
+              [class.row--missing]="!recent.exists"
+              [disabled]="busy()"
+              [title]="recent.exists ? recent.path : 'Folder not found'"
+              (click)="open(recent.path)"
+            >
+              <span class="row__name">{{ recent.name }}</span>
+              <span class="row__path lx-mono">{{ short(recent.path) }}</span>
+              @if (recent.origin; as origin) {
+                <span
+                  class="row__badge lx-mono"
+                  [attr.title]="origin.tags.length > 1 ? origin.tags.join(', ') : null"
+                  >{{ phraseBadge(origin.tags) }}</span
+                >
+              } @else {
+                <span></span>
+              }
+              <span class="row__when">{{ when(recent.openedAt) }}</span>
+            </button>
+            <!-- A sibling, not a child: a button inside a button is invalid. -->
+            <button
+              type="button"
+              class="row__forget"
+              title="Remove from recent"
+              [attr.aria-label]="'Remove ' + recent.name + ' from recent'"
+              (click)="forget(recent, $event)"
+            >
+              ×
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <footer class="foot">
+    <lx-toggle
+      aria-labelledby="launch-toggle-label"
+      [checked]="showMenu()"
+      [disabled]="!settings.loaded() || settings.loadFailed()"
+      (checkedChange)="setShowMenu($event)"
+    />
+    <span class="foot__label" id="launch-toggle-label">Show this menu at launch</span>
+    <span class="foot__hint">Off reopens the last project directly.</span>
+    <a class="foot__link" routerLink="/settings" [queryParams]="{ section: 'phrase' }">Settings</a>
+  </footer>
+</div>

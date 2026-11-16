@@ -1,0 +1,262 @@
+<div class="toolbar">
+  <div class="filters" role="group" aria-label="Filter terms">
+    @for (f of filters(); track f.value) {
+      <button
+        type="button"
+        class="filter"
+        [class.filter--active]="store.filter() === f.value"
+        [attr.aria-pressed]="store.filter() === f.value"
+        (click)="store.filter.set(f.value)"
+      >
+        {{ f.label }}<span class="filter-count lx-mono">{{ f.count }}</span>
+      </button>
+    }
+  </div>
+  <input
+    lxInput
+    class="search"
+    type="search"
+    placeholder="Search terms or translations"
+    aria-label="Search terms or translations"
+    [value]="store.query()"
+    (input)="onQuery($event)"
+  />
+  <div class="toolbar-end">
+    <span class="path lx-mono" [attr.title]="store.path()">{{ store.path() }}</span>
+    <lx-shared-source-control
+      kind="termbase"
+      [path]="store.path()"
+      [linked]="store.linked()"
+      [available]="store.available()"
+      (changed)="store.load()"
+    />
+    <button lx-button type="button" variant="secondary" (click)="chooseFile()">Import CSV…</button>
+    <input
+      #file
+      type="file"
+      class="sr-only"
+      accept=".csv,text/csv"
+      tabindex="-1"
+      aria-hidden="true"
+      (change)="onFile($event)"
+    />
+    <button lx-button type="button" variant="primary" (click)="store.add()">Add term</button>
+  </div>
+</div>
+
+<div class="body">
+  <section class="table" aria-label="Terms">
+    <div
+      class="grid"
+      role="grid"
+      aria-label="Term base"
+      [attr.aria-rowcount]="store.rows().length + 1"
+      [attr.aria-activedescendant]="selected() ? 'term-row-' + selected()!.id : null"
+      [style.--tb-cols]="columns()"
+      [style.--tb-min-width.px]="minWidth()"
+      [style.--tb-term-width.px]="termWidth"
+      tabindex="0"
+      (keydown)="onTableKey($event)"
+    >
+      <div class="row row--head" role="row">
+        <span class="th th--term" role="columnheader">Term</span>
+        <span class="th th--dnt" role="columnheader">DNT</span>
+        @for (l of locales(); track l.code) {
+          <span class="th" role="columnheader">{{ l.code }}</span>
+        }
+      </div>
+
+      @for (t of store.rows(); track t.id) {
+        <div
+          class="row"
+          role="row"
+          [id]="'term-row-' + t.id"
+          [class.row--selected]="t.id === store.selectedId()"
+          [attr.aria-selected]="t.id === store.selectedId()"
+          tabindex="-1"
+          (click)="store.select(t.id)"
+          (keydown.enter)="store.select(t.id)"
+        >
+          <div class="cell cell--term" role="gridcell">
+            <span class="term" [class.term--untitled]="!t.term.trim()">{{
+              t.term.trim() || 'New term'
+            }}</span>
+            @if (t.note) {
+              <span class="note">{{ t.note }}</span>
+            }
+          </div>
+          <div class="cell cell--dnt" role="gridcell">
+            <button
+              type="button"
+              class="check"
+              role="checkbox"
+              tabindex="-1"
+              [class.check--on]="t.dnt"
+              [attr.aria-checked]="t.dnt"
+              [attr.aria-label]="'Do not translate ' + sourceOf(t)"
+              (click)="toggleRowDnt($event, t.id)"
+            >
+              @if (t.dnt) {
+                <span aria-hidden="true">✓</span>
+              }
+            </button>
+          </div>
+          @if (t.dnt) {
+            <div
+              class="cell cell--merged"
+              role="gridcell"
+              [style.grid-column]="'span ' + locales().length"
+            >
+              <span class="merged-label">
+                <span class="dnt-badge lx-mono">DNT</span>
+                <span class="kept">Kept as source in all locales</span>
+              </span>
+            </div>
+          } @else {
+            @for (l of locales(); track l.code) {
+              <div class="cell cell--locale" role="gridcell">
+                @if (value(t, l.code); as v) {
+                  <span class="tr" [attr.lang]="l.code" [attr.dir]="l.rtl ? 'rtl' : null">{{
+                    v
+                  }}</span>
+                } @else {
+                  <span class="same lx-mono" aria-hidden="true">=</span>
+                  <span class="tr tr--source">
+                    {{ sourceOf(t) }}<span class="sr-only"> (kept as source)</span>
+                  </span>
+                }
+              </div>
+            }
+          }
+        </div>
+      } @empty {
+        @if (store.loaded()) {
+          <p class="empty">No terms match this filter.</p>
+        }
+      }
+    </div>
+
+    <p class="footnote">
+      Only terms that appear in the string being translated are injected into the prompt. A locale
+      without a translation keeps the source term, same as DNT for that locale. Both are checked
+      after generation and flagged if the model changed them.
+    </p>
+  </section>
+
+  <aside class="editor" aria-label="Term editor">
+    @if (selected(); as t) {
+      <label class="field">
+        <span class="label lx-mono">Source term</span>
+        <input
+          lxInput
+          class="input input--term"
+          placeholder="New term"
+          [value]="t.term"
+          (input)="onTerm(t.id, $event)"
+        />
+      </label>
+
+      <label class="field">
+        <span class="label lx-mono">Note for the model</span>
+        <input
+          lxInput
+          class="input"
+          placeholder="Meaning or usage, sent with the term"
+          [value]="t.note"
+          (input)="onNote(t.id, $event)"
+        />
+      </label>
+
+      <button
+        type="button"
+        class="dnt-card"
+        role="switch"
+        [attr.aria-checked]="t.dnt"
+        (click)="store.toggleDnt(t.id)"
+      >
+        <span class="switch" [class.switch--on]="t.dnt" aria-hidden="true"
+          ><span class="knob"></span
+        ></span>
+        <span class="dnt-text">
+          <span class="dnt-title">Do not translate (DNT)</span>
+          <span class="dnt-desc">
+            Keep the term exactly as written in every locale. Turns off locale translations. Without
+            DNT, any locale left empty also keeps the source term.
+          </span>
+        </span>
+      </button>
+
+      <div class="field">
+        <div class="label-row">
+          <span class="label lx-mono" id="translations-label">Translations</span>
+          @if (t.dnt) {
+            <span class="dnt-badge lx-mono">Locked by DNT</span>
+          } @else {
+            <span class="status">{{ status() }}</span>
+          }
+        </div>
+        @if (t.dnt) {
+          @if (filled() > 0) {
+            <p class="stored">{{ storedNote() }}</p>
+          }
+        } @else {
+          <div class="locales" role="group" aria-labelledby="translations-label">
+            @for (l of locales(); track l.code) {
+              <div class="locale">
+                <label class="locale-id" [for]="'tr-' + l.code">
+                  <span class="locale-code">{{ l.code }}</span>
+                  <span class="locale-name">{{ l.name }}</span>
+                </label>
+                <input
+                  lxInput
+                  class="input"
+                  [id]="'tr-' + l.code"
+                  [attr.dir]="l.rtl ? 'rtl' : null"
+                  [placeholder]="'Empty: stays &quot;' + sourceOf(t) + '&quot;'"
+                  [value]="t.translations[l.code] ?? ''"
+                  (input)="onTranslation(t.id, l.code, $event)"
+                />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (promptLocale(); as locale) {
+        <div class="field">
+          <span class="label lx-mono">Prompt line · {{ locale }} run</span>
+          <pre class="prompt lx-mono">{{ promptLine() }}</pre>
+        </div>
+      }
+
+      <div class="editor-foot">
+        <button
+          lx-button
+          type="button"
+          class="delete"
+          [variant]="armedDelete() ? 'danger-soft' : 'secondary'"
+          (click)="deleteSelected()"
+        >
+          {{ armedDelete() ? 'Click again to delete' : 'Delete term' }}
+        </button>
+        <span class="saves">Changes save on edit</span>
+      </div>
+    } @else if (store.loaded()) {
+      <p class="editor-empty">No term selected. Add a term or import a CSV to start.</p>
+    }
+  </aside>
+
+  @if (importFile(); as file) {
+    <lx-import-dialog
+      [fileName]="file.name"
+      [text]="file.text"
+      [locales]="locales()"
+      (chooseAnother)="chooseFile()"
+      (closed)="importFile.set(null)"
+    />
+  }
+</div>
+
+@if (store.error(); as message) {
+  <p class="failed" role="alert">{{ message }}</p>
+}

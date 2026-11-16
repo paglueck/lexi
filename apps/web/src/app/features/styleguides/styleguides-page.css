@@ -1,0 +1,330 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---- the locale bar ------------------------------------------------------ */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-4);
+  height: var(--lx-h-localebar);
+  flex: none;
+  padding: 0 var(--lx-sp-14);
+  background: var(--lx-bg-rail);
+  border-bottom: 1px solid var(--lx-border-section);
+}
+
+/* Scrolls sideways when a project has more locales than fit. The scrollbar is
+   hidden rather than thin: inside a 38px bar it eats the height the tabs need
+   to stay clickable, and wheel, trackpad and keyboard focus all still scroll. */
+.tabs {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--lx-sp-4);
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex: none;
+  padding: 5px 11px;
+  border-radius: var(--lx-r-6);
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-faint);
+  white-space: nowrap;
+}
+
+.tab--active {
+  background: var(--lx-bg-segment-active);
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.tab--global {
+  background: var(--lx-accent-tint-bg-deep);
+  border: 1px solid var(--lx-accent-tint-border);
+  color: var(--lx-accent-on-tint);
+}
+
+.tab--global.tab--active {
+  font-weight: var(--lx-fw-600);
+}
+
+.addwrap {
+  position: relative;
+  flex: none;
+}
+
+.add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--lx-sp-4);
+  padding: 5px 9px;
+  border: 1px dashed var(--lx-border-strong);
+  border-radius: var(--lx-r-6);
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-faint);
+  white-space: nowrap;
+}
+
+.add:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: var(--lx-sp-4);
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-bg-raised);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 45%);
+}
+
+.menuitem {
+  flex: none;
+  padding: var(--lx-sp-4) var(--lx-sp-8);
+  border-radius: var(--lx-r-5);
+  text-align: left;
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-secondary);
+  white-space: nowrap;
+}
+
+.menuitem:hover {
+  background: var(--lx-bg-selected);
+}
+
+.menuempty {
+  padding: var(--lx-sp-6) var(--lx-sp-8);
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-12);
+  flex: none;
+  margin-left: auto;
+  padding-left: var(--lx-sp-14);
+}
+
+.meta .path {
+  font-size: var(--lx-fs-11);
+  color: var(--lx-text-faint);
+  /* A linked folder's path is absolute and can be long; the title holds all of it. */
+  max-width: 36ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill {
+  padding: var(--lx-sp-2) var(--lx-sp-8);
+  border-radius: var(--lx-r-full);
+  background: var(--lx-accent-tint-bg-deep);
+  border: 1px solid var(--lx-accent-tint-border);
+  color: var(--lx-accent-on-tint);
+  font-size: var(--lx-fs-11);
+  white-space: nowrap;
+}
+
+.pill--over {
+  background: var(--lx-warn-tint-bg);
+  border-color: var(--lx-warn-tint-border);
+  color: var(--lx-warn);
+}
+
+/* ---- the two-pane body ---------------------------------------------------- */
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 620px;
+  overflow: hidden;
+}
+
+.editor,
+.preview {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--lx-sp-20) var(--lx-sp-22);
+  border-right: 1px solid var(--lx-border-section);
+  overflow: auto;
+  gap: var(--lx-sp-14);
+}
+
+.preview {
+  background: var(--lx-bg-rail);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-8);
+}
+
+.input {
+  flex: 1;
+  min-height: 0;
+  resize: none;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: var(--lx-fs-11-5);
+  line-height: 1.85;
+  color: var(--lx-text-mono);
+}
+
+.err {
+  margin: 0;
+  color: var(--lx-danger-on-tint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.stale {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-8);
+  margin: 0;
+  color: var(--lx-warn-on-tint);
+  font-size: var(--lx-fs-11-5);
+}
+
+/* ---- the rendered preview -------------------------------------------------- */
+
+.rendered {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-10);
+  font-size: var(--lx-fs-12-5);
+  line-height: var(--lx-lh-body);
+  color: var(--lx-text-secondary);
+}
+
+.empty {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+}
+
+.heading {
+  color: var(--lx-accent-on-tint);
+  font-weight: var(--lx-fw-600);
+}
+
+.heading[data-level='1'] {
+  font-size: var(--lx-fs-19);
+}
+
+.heading[data-level='2'] {
+  font-size: var(--lx-fs-14);
+  margin-top: var(--lx-sp-6);
+}
+
+.heading[data-level='3'],
+.heading[data-level='4'],
+.heading[data-level='5'],
+.heading[data-level='6'] {
+  font-size: var(--lx-fs-12-5);
+}
+
+.para {
+  margin: 0;
+}
+
+.quote {
+  margin: 0;
+  padding-left: var(--lx-sp-12);
+  border-left: 2px solid var(--lx-accent-tint-border-deep);
+  color: var(--lx-text-muted);
+}
+
+.quote p {
+  margin: 0 0 var(--lx-sp-6);
+}
+
+.list {
+  margin: 0;
+  padding-left: var(--lx-sp-20);
+}
+
+.table {
+  border-collapse: collapse;
+  font-size: var(--lx-fs-12);
+}
+
+.table th,
+.table td {
+  padding: var(--lx-sp-4) var(--lx-sp-10);
+  border-bottom: 1px solid var(--lx-border-row);
+  text-align: left;
+}
+
+.table th[data-align='center'],
+.table td[data-align='center'] {
+  text-align: center;
+}
+
+.table th[data-align='right'],
+.table td[data-align='right'] {
+  text-align: right;
+}
+
+.table thead th {
+  color: var(--lx-text-faint);
+  font-weight: var(--lx-fw-600);
+  border-bottom: 1px solid var(--lx-border-strong);
+}
+
+.code {
+  margin: 0;
+  padding: var(--lx-sp-8) var(--lx-sp-10);
+  border-radius: var(--lx-r-6);
+  background: var(--lx-bg-rail);
+  font-size: var(--lx-fs-11-5);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.rule {
+  margin: var(--lx-sp-8) 0;
+  border: none;
+  border-top: 1px solid var(--lx-border-section);
+}

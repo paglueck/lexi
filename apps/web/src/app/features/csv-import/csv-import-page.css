@@ -1,0 +1,333 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--lx-bg-app);
+}
+
+/* ---- file header strip ---- */
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-18);
+  padding: var(--lx-sp-14) var(--lx-sp-20);
+  border-bottom: 1px solid var(--lx-border-section);
+  background: var(--lx-bg-panel);
+}
+
+.head__title {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-3);
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-faint);
+}
+
+.crumbs a {
+  color: var(--lx-accent);
+  text-decoration: none;
+}
+
+.crumbs a:hover {
+  color: var(--lx-accent-on-tint);
+  text-decoration: underline;
+}
+
+.title {
+  font-size: var(--lx-fs-15);
+  font-weight: var(--lx-fw-600);
+  color: var(--lx-text-primary);
+}
+
+.head__divider {
+  width: 1px;
+  height: 32px;
+  flex: none;
+  background: var(--lx-divider);
+}
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-8);
+  min-width: 0;
+}
+
+.file {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+}
+
+.file__line {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-10);
+  font-size: var(--lx-fs-11-5);
+}
+
+.file__name {
+  color: var(--lx-text-secondary);
+}
+
+.file__meta {
+  color: var(--lx-text-faint);
+}
+
+.file__cols {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  font-size: var(--lx-fs-10-5);
+}
+
+.col {
+  padding: 1px 7px;
+  border: 1px solid var(--lx-accent-tint-border);
+  border-radius: var(--lx-r-4);
+  background: var(--lx-accent-tint-bg);
+  color: var(--lx-accent-on-tint);
+}
+
+.col--ignored {
+  border-style: dashed;
+  border-color: var(--lx-neutral-tint-border);
+  background: transparent;
+  color: var(--lx-text-subtle);
+}
+
+.head__end {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--lx-sp-12);
+  margin-left: auto;
+}
+
+.baseline {
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-faint);
+}
+
+/* The design's 28px secondary button: xs geometry, one step taller, regular weight. */
+button.choose {
+  --b-h: 28px;
+  --b-px: var(--lx-sp-12);
+  --b-fs: var(--lx-fs-12);
+  --b-fw: var(--lx-fw-400);
+}
+
+/* ---- body: the list, and the selected row's detail ---- */
+.body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) var(--lx-w-import-panel);
+  min-height: 0;
+}
+
+.pane {
+  --import-cols: 22px 48px 190px minmax(0, 1fr) 104px;
+
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--lx-border-section);
+  background: var(--lx-bg-rail);
+}
+
+/* ---- banners: applied, undone, and a refused Apply ---- */
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-12);
+  margin: var(--lx-sp-14) var(--lx-sp-16) 0;
+  padding: 11px var(--lx-sp-14);
+  border: 1px solid var(--lx-accent-tint-border);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-accent-tint-bg);
+  font-size: var(--lx-fs-12-5);
+  line-height: var(--lx-lh-tight);
+  color: var(--lx-accent-on-tint);
+}
+
+.banner--error {
+  border-color: var(--lx-danger-tint-border);
+  background: var(--lx-danger-tint-bg);
+  color: var(--lx-danger-on-tint);
+}
+
+.banner__lines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+}
+
+.banner__files {
+  font-size: var(--lx-fs-11);
+}
+
+.banner__action,
+.banner__link {
+  flex: none;
+  background: transparent;
+  font-size: var(--lx-fs-12);
+}
+
+.banner__action {
+  color: var(--lx-text-primary);
+}
+
+.banner__link {
+  color: var(--lx-accent);
+}
+
+.banner__action:hover:not(:disabled),
+.banner__link:hover {
+  text-decoration: underline;
+}
+
+.banner__action:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---- toolbar ---- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-14);
+  padding: var(--lx-sp-12) var(--lx-sp-16);
+  border-bottom: 1px solid var(--lx-border-section);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--lx-sp-2);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-6);
+  height: 26px;
+  padding: 0 var(--lx-sp-10);
+  border-radius: var(--lx-r-6);
+  background: transparent;
+  color: var(--lx-text-subtle);
+  font-size: var(--lx-fs-12);
+}
+
+.tab--active {
+  background: var(--lx-bg-tab-active);
+  color: var(--lx-text-primary);
+  font-weight: var(--lx-fw-600);
+}
+
+.tab__count {
+  font-size: var(--lx-fs-10-5);
+  font-weight: var(--lx-fw-400);
+  color: var(--lx-text-faint);
+}
+
+.tab__count[data-tone='warn'] {
+  color: var(--lx-warn);
+}
+
+.tab__count[data-tone='danger'] {
+  color: var(--lx-danger-on-tint);
+}
+
+/* The design's switch track sits a step lighter than the kit's default rail. */
+.switch {
+  background: var(--lx-bg-track);
+}
+
+/* ---- bulk bar (Conflicts tab) ---- */
+.bulk {
+  display: flex;
+  align-items: center;
+  gap: var(--lx-sp-14);
+  padding: 9px var(--lx-sp-16);
+  border-bottom: 1px solid var(--lx-border-row);
+  background: var(--lx-bg-track);
+  font-size: var(--lx-fs-12);
+  color: var(--lx-text-subtle);
+}
+
+.bulk__link {
+  background: transparent;
+  color: var(--lx-accent-on-tint);
+  font-size: inherit;
+}
+
+.bulk__link:hover {
+  text-decoration: underline;
+}
+
+/* ---- column header and rows ---- */
+.colhead {
+  display: grid;
+  grid-template-columns: var(--import-cols);
+  gap: var(--lx-sp-12);
+  padding: var(--lx-sp-7) var(--lx-sp-16);
+  border-bottom: 1px solid var(--lx-border-table);
+  background: var(--lx-bg-panel);
+  font-size: var(--lx-fs-9-5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lx-text-faint);
+}
+
+.colhead__split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--lx-sp-14);
+}
+
+.rows {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.rows:focus-visible {
+  outline: none;
+  box-shadow: inset var(--lx-ring-focus);
+}
+
+.unchanged {
+  margin: var(--lx-sp-16);
+  padding: var(--lx-sp-26) var(--lx-sp-16);
+  border: 1px dashed var(--lx-divider);
+  border-radius: var(--lx-r-7);
+  font-size: var(--lx-fs-12-5);
+  line-height: var(--lx-lh-loose);
+  color: var(--lx-text-subtle);
+  text-align: center;
+}
+
+/* ---- a re-pick that is running, or failed ---- */
+.status {
+  padding: var(--lx-sp-24) var(--lx-sp-20);
+  font-size: var(--lx-fs-13);
+  color: var(--lx-text-faint);
+}
+
+.status--failed {
+  color: var(--lx-danger);
+}

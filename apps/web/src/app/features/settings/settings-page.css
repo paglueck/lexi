@@ -1,0 +1,358 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.page {
+  display: grid;
+  grid-template-columns: var(--lx-w-settings-nav) 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+/* -- the 220px nav rail ---------------------------------------------------- */
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-1);
+  padding: var(--lx-sp-16) var(--lx-sp-12);
+  border-right: 1px solid var(--lx-border-section);
+  background: var(--lx-bg-rail);
+  overflow-y: auto;
+}
+
+.rail h2 {
+  margin: 0 var(--lx-sp-8) var(--lx-sp-8);
+}
+
+/* A real button: the rows are the page's navigation, so they have to be
+   reachable and operable from the keyboard like any other. LxNavRow keeps
+   drawing them. */
+.nav {
+  display: block;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+/* The ring token is a box-shadow, not a colour — as an outline it was dropped. */
+.nav:focus-visible {
+  border-radius: var(--lx-r-6);
+  box-shadow: var(--lx-ring-focus);
+}
+
+/* -- the pane -------------------------------------------------------------- */
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-26);
+  padding: var(--lx-sp-28) var(--lx-sp-36);
+  /* Room for two-column panes like Phrase tokens; the cap only stops form
+     fields from stretching across a very wide window. */
+  max-width: 1280px;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-14);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--lx-fs-17);
+  font-weight: var(--lx-fw-600);
+  color: var(--lx-text-primary);
+}
+
+.pending {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--lx-fs-12-5);
+  line-height: var(--lx-lh-body);
+  color: var(--lx-text-subtle);
+}
+
+/* -- endpoint -------------------------------------------------------------- */
+
+.cards {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards--three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Drawn because the adapter seam is real and the design draws it; not
+   selectable because nothing implements it. */
+.card--unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--lx-sp-12);
+  align-items: start;
+}
+
+.numbers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--lx-sp-12);
+}
+
+/* The combobox's host is the field's control, so it takes the field's width. */
+.combo,
+.combo lx-combobox {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  gap: var(--lx-sp-8);
+  align-self: end;
+  padding-bottom: var(--lx-sp-2);
+}
+
+.actions--start {
+  align-self: start;
+}
+
+/* Release notes from the update server: text, never HTML. */
+.notes {
+  margin: 0;
+  max-width: 72ch;
+  max-height: 320px;
+  overflow: auto;
+  font-family: var(--lx-font-ui);
+  line-height: var(--lx-lh-body);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.warn-hint {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--lx-fs-11);
+  line-height: var(--lx-lh-body);
+  color: var(--lx-warn-body-text);
+}
+
+/* -- the test-connection callout ------------------------------------------- */
+
+.callout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-8);
+  margin: 0;
+  padding: var(--lx-sp-12) var(--lx-sp-14);
+  border: 1px solid var(--lx-border-section);
+  border-radius: var(--lx-r-8);
+  background: var(--lx-bg-panel);
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-secondary);
+}
+
+.callout[data-tone='ok'] {
+  border-color: var(--lx-accent-tint-border);
+  background: var(--lx-accent-tint-bg);
+  color: var(--lx-accent-on-tint);
+}
+
+.callout[data-tone='bad'],
+.callout--bad {
+  border-color: var(--lx-danger-tint-border);
+  background: var(--lx-danger-tint-bg);
+  color: var(--lx-danger-on-tint);
+}
+
+.callout__head {
+  display: flex;
+  gap: var(--lx-sp-8);
+  margin: 0;
+  font-weight: var(--lx-fw-600);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Never colour alone (FR-3.7's rule, applied here too): the mark and the
+   labelled row carry the answer, the colour only reinforces it. */
+.step {
+  display: grid;
+  grid-template-columns: 14px 92px 1fr auto;
+  gap: var(--lx-sp-8);
+  align-items: baseline;
+  font-size: var(--lx-fs-11-5);
+  color: var(--lx-text-subtle);
+}
+
+.step[data-ok='false'] .step__mark,
+.step[data-ok='false'] .step__detail {
+  color: var(--lx-danger);
+}
+
+.step__mark {
+  text-align: center;
+}
+
+.step__label {
+  color: var(--lx-text-muted);
+}
+
+.step__detail {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.step__ms {
+  font-size: var(--lx-fs-10-5);
+  color: var(--lx-text-faint-2);
+}
+
+.models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--lx-sp-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.model {
+  padding: var(--lx-sp-2) var(--lx-sp-8);
+  border: 1px solid var(--lx-accent-tint-border);
+  border-radius: var(--lx-r-5);
+  background: transparent;
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-11);
+  color: var(--lx-accent-on-tint-dim);
+}
+
+/* -- toggles --------------------------------------------------------------- */
+
+.toggles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-10);
+}
+
+.toggle,
+.project-setting {
+  display: flex;
+  gap: var(--lx-sp-10);
+  align-items: start;
+}
+
+.project-setting {
+  justify-content: space-between;
+  padding-top: var(--lx-sp-12);
+  border-top: 1px solid var(--lx-border-section);
+}
+
+.toggle__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-2);
+  min-width: 0;
+  max-width: 62ch;
+}
+
+.toggle__label {
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-secondary);
+}
+
+.toggle__hint {
+  font-size: var(--lx-fs-11);
+  line-height: var(--lx-lh-body);
+  color: var(--lx-text-faint-2);
+}
+
+/* -- the privacy callout (FR-6.15) ----------------------------------------- */
+
+.privacy {
+  display: flex;
+  gap: var(--lx-sp-10);
+  padding: var(--lx-sp-14) var(--lx-sp-16);
+  border: 1px solid var(--lx-border-section);
+  border-radius: var(--lx-r-8);
+  background: var(--lx-bg-panel);
+}
+
+.privacy__mark {
+  color: var(--lx-accent);
+}
+
+.privacy__text {
+  margin: 0;
+  font-size: var(--lx-fs-12-5);
+  line-height: var(--lx-lh-body);
+  color: var(--lx-text-subtle);
+}
+
+.privacy__warn {
+  display: block;
+  margin-top: var(--lx-sp-4);
+  color: var(--lx-warn);
+}
+
+/* -- validation rules -------------------------------------------------------- */
+
+/* Each rule row reuses .project-setting's label/control split (M8), just
+   without the top border between the pane intro and the first row. */
+.toggles > .project-setting:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* -- shortcuts reference table ----------------------------------------------- */
+
+.shortcut-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-8);
+}
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcut-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: var(--lx-sp-10);
+  align-items: center;
+  font-size: var(--lx-fs-12-5);
+  color: var(--lx-text-secondary);
+}
+
+.shortcut-row kbd {
+  justify-self: start;
+  padding: var(--lx-sp-2) var(--lx-sp-8);
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-5);
+  color: var(--lx-text-faint-2);
+  font-size: var(--lx-fs-11);
+}

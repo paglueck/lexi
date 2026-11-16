@@ -1,0 +1,273 @@
+:host {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.wizard {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--lx-sp-22);
+  min-width: 0;
+  padding: var(--lx-sp-32) var(--lx-sp-40) var(--lx-sp-40);
+  overflow: hidden;
+}
+
+.loading,
+.error {
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-13);
+}
+
+.error {
+  color: var(--lx-danger-on-tint);
+}
+
+/* Header ------------------------------------------------------------------ */
+
+.head {
+  display: flex;
+  gap: var(--lx-sp-24);
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.head__titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--lx-sp-6);
+  min-width: 0;
+}
+
+.head__title {
+  margin: 0;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-20);
+  font-weight: var(--lx-fw-600);
+  letter-spacing: -0.01em;
+}
+
+.head__path {
+  overflow: hidden;
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-11-5);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.warnpill {
+  display: flex;
+  flex: none;
+  gap: var(--lx-sp-8);
+  align-items: center;
+  margin: 0;
+  padding: var(--lx-sp-8) var(--lx-sp-12);
+  border: 1px solid var(--lx-warn-tint-border-deep);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-warn-callout-bg);
+  color: var(--lx-warn-on-tint);
+  font-size: var(--lx-fs-12-5);
+}
+
+/* Table ------------------------------------------------------------------- */
+
+/* The scrollport, so the head row below can stick while the rows move. The
+   wizard itself does not scroll: header and footer stay put, this scrolls. */
+.table {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  overflow: hidden auto;
+}
+
+/* `flex: none` is load-bearing: the table is a flex column with a capped
+   height, so its rows are shrinkable items. The head sets `min-height: 0`,
+   which let it shrink to a 1px sliver under the first row once the content
+   overflowed — the rows held their 44px and it gave up everything. */
+.tr {
+  display: grid;
+  flex: none;
+  grid-template-columns: 300px 150px 170px 90px 1fr;
+  align-items: center;
+  min-height: var(--lx-h-row-wizard);
+  border-bottom: 1px solid var(--lx-border-row);
+}
+
+.tr:last-child {
+  border-bottom: 0;
+}
+
+.tr--head {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  min-height: 0;
+  border-bottom-color: var(--lx-border-table);
+  background: var(--lx-bg-titlebar);
+}
+
+/* The extraction template, tinted so it reads as the source (FR-1.2a). */
+.tr--source {
+  background: var(--lx-bg-source-row);
+}
+
+/* FR-1.2b: the row whose target-language disagrees with its filename. */
+.tr--warn {
+  background: var(--lx-warn-surface-bg);
+}
+
+.th,
+.td {
+  padding: var(--lx-sp-10) var(--lx-sp-14);
+  border-right: 1px solid var(--lx-border-row);
+}
+
+.th:last-child,
+.td:last-child {
+  border-right: 0;
+}
+
+.th {
+  border-right-color: var(--lx-border-table);
+  color: var(--lx-text-faint);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+  letter-spacing: var(--lx-track-cap);
+  text-transform: uppercase;
+}
+
+.tr--warn .th,
+.tr--warn .td {
+  border-right-color: var(--lx-warn-row-border);
+}
+
+.th--num,
+.td--num {
+  text-align: right;
+}
+
+.td--file {
+  display: flex;
+  gap: var(--lx-sp-8);
+  align-items: center;
+  overflow: hidden;
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-12);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tr--warn .td--file,
+.tr--warn .td--num {
+  color: var(--lx-warn-on-tint);
+}
+
+.td--locale {
+  display: flex;
+  gap: var(--lx-sp-8);
+  align-items: center;
+}
+
+.td__source {
+  flex: none;
+  color: var(--lx-accent);
+  font-size: var(--lx-fs-11);
+}
+
+.td--attr {
+  color: var(--lx-text-muted);
+  font-size: var(--lx-fs-12);
+}
+
+.stale {
+  color: var(--lx-danger);
+  text-decoration: line-through;
+}
+
+.td--num {
+  color: var(--lx-text-secondary);
+  font-size: var(--lx-fs-12);
+}
+
+.td--note {
+  display: flex;
+  gap: var(--lx-sp-10);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--lx-sp-8) var(--lx-sp-14);
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-12-5);
+}
+
+.note--source {
+  color: var(--lx-accent-on-tint);
+}
+
+/* Step 3 ------------------------------------------------------------------ */
+
+.source {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--lx-sp-14);
+  min-height: 0;
+  max-width: 980px;
+}
+
+.source__title {
+  margin: 0;
+  color: var(--lx-text-primary);
+  font-size: var(--lx-fs-17);
+  font-weight: var(--lx-fw-600);
+}
+
+.source__hint {
+  max-width: 620px;
+  margin: 0;
+  color: var(--lx-text-muted);
+  font-size: var(--lx-fs-12-5);
+  line-height: 1.5;
+}
+
+/* A project can carry a dozen locales; one card per row turns a glanceable
+   choice into a scroll. The column count follows the width, as in settings.
+   The grid scrolls rather than the step, so the question and the footer's
+   "Open project" stay put however many locales there are — the same shape the
+   mapping table has. `align-content` keeps a short list from stretching. */
+.cards {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  align-content: start;
+  overflow-y: auto;
+}
+
+/* Footer ------------------------------------------------------------------ */
+
+.foot {
+  display: flex;
+  gap: var(--lx-sp-24);
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--lx-sp-8);
+}
+
+.foot__note {
+  max-width: 520px;
+  margin: 0;
+  color: var(--lx-text-faint);
+  font-size: var(--lx-fs-12-5);
+}
+
+.foot__actions {
+  display: flex;
+  flex: none;
+  gap: var(--lx-sp-10);
+}

@@ -1,0 +1,150 @@
+/*
+ * Light theme. Same token list as semantic.dark.css, different primitives —
+ * that is the whole payoff of the two-layer architecture, and the parity test
+ * is what keeps it true.
+ *
+ * Values marked DERIVED do not exist in the design handoff (only S9/S10 are
+ * light, and they do not cover every surface). They are computed from values
+ * that ARE specified, and collected on the designer-review list.
+ */
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* ---- surfaces ---- */
+  --lx-bg-app: var(--p-stone-0);
+  --lx-bg-titlebar: var(--p-stone-100);
+  --lx-bg-rail: var(--p-stone-50);
+  --lx-bg-panel: var(--p-stone-50);
+  --lx-bg-cell: var(--p-stone-0);
+  --lx-bg-field: var(--p-stone-0);
+  --lx-bg-raised: var(--p-stone-0);
+  /* Two slots, not one: the mock uses #EFF7F5 for the selected grid row and
+     #E3F1EF for every active nav/filter row. In dark both are #17262A, so
+     collapsing them looks correct and is wrong in light only. */
+  --lx-bg-selected: var(--p-teal-l50);
+  --lx-cell-selected-bg: color-mix(in srgb, var(--p-teal-l600) 26%, transparent); /* DERIVED */
+  --lx-cell-picked-bg: color-mix(in srgb, var(--p-teal-l600) 14%, transparent); /* DERIVED */
+  --lx-bg-nav-active: var(--p-teal-l100);
+  --lx-bg-tab-active: var(--p-stone-200);
+  --lx-bg-segment-active: var(--p-stone-200);
+  --lx-bg-track: var(--p-stone-100); /* DERIVED */
+  --lx-bg-modal: var(--p-stone-0);
+  --lx-bg-modal-footer: var(--p-stone-50);
+  --lx-bg-editor: var(--p-stone-0);
+  --lx-bg-source-row: color-mix(in srgb, var(--p-teal-l100) 55%, var(--p-stone-0)); /* DERIVED */
+
+  /* ---- borders ---- */
+  --lx-border-strong: var(--p-stone-250);
+  --lx-divider: var(--p-stone-300);
+  --lx-border-chrome: var(--p-stone-250);
+  --lx-border-table: var(--p-stone-200);
+  --lx-border-section: var(--p-stone-200);
+  --lx-border-row: var(--p-stone-150);
+
+  /* ---- text ---- */
+  --lx-text-primary: var(--p-stone-950);
+  --lx-text-secondary: var(--p-stone-700);
+  --lx-text-mono: var(--p-stone-700);
+  --lx-text-muted: var(--p-stone-600);
+  --lx-text-subtle: var(--p-stone-700);
+  --lx-text-faint: var(--p-stone-550);
+  --lx-text-faint-2: var(--p-stone-500);
+  --lx-text-faint-3: var(--p-stone-500);
+
+  /* ---- accent ramp. Note -on is WHITE here and #062A27 in dark: this is the
+         slot the handoff conflates with -on-tint, and getting it wrong makes
+         every primary button unreadable. ---- */
+  --lx-accent: var(--p-teal-l600);
+  --lx-accent-on: var(--p-stone-0);
+  --lx-accent-tint-bg: var(--p-teal-l100);
+  --lx-accent-tint-bg-deep: var(--p-teal-l150);
+  --lx-accent-tint-border: var(--p-teal-l200);
+  --lx-accent-tint-border-deep: var(--p-teal-l250);
+  --lx-accent-tint-border-final: var(--p-teal-l300);
+  --lx-accent-border-soft: var(--p-teal-l200);
+  --lx-accent-tint-fg: var(--p-teal-l700);
+  --lx-accent-tint-fg-deep: var(--p-teal-l800);
+  --lx-accent-on-tint: var(--p-teal-l700);
+  --lx-accent-on-tint-dim: var(--p-teal-l500);
+  --lx-accent-bar: var(--p-teal-l600);
+  --lx-accent-bar-muted: color-mix(
+    in srgb,
+    var(--p-teal-l600) 55%,
+    var(--p-stone-350)
+  ); /* DERIVED */
+
+  /* ---- warn ramp ---- */
+  --lx-warn: var(--p-amber-l600);
+  --lx-warn-tint-bg: var(--p-amber-l100);
+  --lx-warn-surface-bg: var(--p-amber-l100);
+  --lx-warn-callout-bg: var(--p-amber-l100);
+  --lx-warn-button-bg: var(--p-amber-l100);
+  --lx-warn-tint-border: var(--p-amber-l300);
+  /* The handoff prints #C08D2C in the DARK table, but it only ever occurs in the
+     light dashboard — it is a light value listed in the wrong column. */
+  --lx-warn-tint-border-deep: var(--p-amber-l500);
+  --lx-warn-row-border: color-mix(
+    in srgb,
+    var(--p-amber-l300) 40%,
+    var(--p-amber-l100)
+  ); /* DERIVED */
+  --lx-warn-tint-fg: var(--p-amber-l600);
+  --lx-warn-on-tint: var(--p-amber-l600);
+  --lx-warn-on-tint-strong: var(--p-amber-l600);
+  --lx-warn-body-text: var(--p-amber-l700);
+  --lx-warn-bar: var(--p-amber-l450);
+  --lx-warn-bar-muted: color-mix(
+    in srgb,
+    var(--p-amber-l450) 55%,
+    var(--p-stone-350)
+  ); /* DERIVED */
+
+  /* ---- danger ramp ---- */
+  --lx-danger: var(--p-coral-l700);
+  --lx-danger-tint-bg: var(--p-coral-l100);
+  --lx-danger-tint-bg-deep: var(--p-coral-l100);
+  --lx-danger-cell-bg: var(--p-coral-l50);
+  --lx-danger-tint-border: var(--p-coral-l300);
+  --lx-danger-border-soft: var(--p-coral-l300);
+  --lx-danger-tint-fg: var(--p-coral-l700);
+  --lx-danger-on-tint: var(--p-coral-l700);
+  --lx-danger-bar: var(--p-coral-l500);
+
+  /* ---- neutral ramp ---- */
+  --lx-neutral-track: var(--p-stone-350);
+  --lx-neutral-track-soft: var(--p-stone-350);
+  --lx-neutral-tint-border: var(--p-stone-400);
+  --lx-neutral-border-strong: var(--p-stone-500); /* DERIVED */
+  --lx-neutral-on-tint: var(--p-stone-650);
+
+  /* ---- chips and effects ---- */
+  --lx-chip-bg: var(--p-teal-l100);
+  --lx-chip-border: var(--p-teal-l250);
+  --lx-chip-fg: var(--p-teal-l700);
+  --lx-chip-dismiss: var(--p-teal-l500);
+  /* S12 draws only the dark theme; these follow the light error cell and final badge. */
+  --lx-chip-danger-bg: var(--lx-danger-cell-bg); /* DERIVED */
+  --lx-chip-danger-border: var(--lx-danger-tint-border); /* DERIVED */
+  --lx-chip-danger-fg: var(--lx-danger-on-tint); /* DERIVED */
+  --lx-chip-accepted-bg: var(--lx-accent-tint-bg-deep); /* DERIVED */
+  --lx-chip-accepted-border: var(--lx-accent); /* DERIVED */
+  --lx-chip-accepted-fg: var(--p-teal-l800); /* DERIVED */
+  /* S16 CSV re-import diff. Light values follow the danger and accent tints. */
+  --lx-diff-del-bg: var(--p-coral-l100); /* DERIVED */
+  --lx-diff-del-fg: var(--p-coral-l700); /* DERIVED */
+  --lx-diff-ins-bg: var(--p-teal-l150); /* DERIVED */
+  --lx-diff-ins-fg: var(--p-teal-l700); /* DERIVED */
+  --lx-chip-removed-border: var(--p-coral-l300); /* DERIVED */
+  --lx-chip-added-border: var(--p-teal-l250); /* DERIVED */
+  --lx-import-csv-card-bg: var(--p-teal-l50); /* DERIVED */
+  --lx-import-csv-count: var(--p-teal-l500); /* DERIVED */
+  --lx-scrim: rgb(6 9 10 / 45%); /* DERIVED */
+  --lx-shadow-modal: 0 30px 80px rgb(0 0 0 / 25%); /* DERIVED */
+  --lx-ring-selected: inset 2px 0 0 var(--lx-accent);
+  /* S17–S19: Phrase checkout and tokens. The design draws only dark. */
+  --lx-bg-selected-hover: var(--p-teal-l100); /* DERIVED */
+  --lx-bg-button-disabled: var(--p-stone-200); /* DERIVED */
+  --lx-danger-on-tint-dim: var(--p-coral-l500); /* DERIVED */
+  --lx-danger-border-destructive: var(--p-coral-l300); /* DERIVED */
+  --lx-ring-focus: 0 0 0 2px color-mix(in srgb, var(--lx-accent) 45%, transparent); /* DERIVED */
+}

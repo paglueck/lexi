@@ -1,0 +1,141 @@
+/*
+ * Dark theme. Selector is [data-theme="dark"], never :root — that is what lets
+ * the kitchen sink render a light subtree inside a dark page, and it costs
+ * nothing.
+ *
+ * Every token defined here MUST also be defined in semantic.light.css. The
+ * token-parity test enforces it; that assertion is the single thing standing
+ * between this design and the usual fate of a second theme.
+ */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* ---- surfaces ---- */
+  --lx-bg-app: var(--p-slate-930);
+  --lx-bg-titlebar: var(--p-slate-900);
+  --lx-bg-rail: var(--p-slate-950);
+  --lx-bg-panel: var(--p-slate-910);
+  --lx-bg-cell: var(--p-slate-900);
+  --lx-bg-field: var(--p-slate-900);
+  --lx-bg-raised: var(--p-slate-870);
+  --lx-bg-selected: var(--p-teal-965);
+  /* The grid's edited cell and its marked cells (multi-select). Translucent
+     accent, so they brighten whatever sits under them — the selected row's
+     tint, a state colour — instead of replacing it with a darker teal. */
+  --lx-cell-selected-bg: color-mix(in srgb, var(--p-teal-400) 34%, transparent); /* DERIVED */
+  --lx-cell-picked-bg: color-mix(in srgb, var(--p-teal-400) 18%, transparent); /* DERIVED */
+  --lx-bg-nav-active: var(--p-teal-965);
+  --lx-bg-tab-active: var(--p-slate-830);
+  --lx-bg-segment-active: var(--p-slate-810);
+  /* S16: the track under the import screen's switches, and its bulk bar. A
+     step lighter than the rail, so the switches stand off the toolbar. */
+  --lx-bg-track: var(--p-slate-940);
+  --lx-bg-modal: var(--p-slate-920);
+  --lx-bg-modal-footer: var(--p-slate-940);
+  --lx-bg-editor: var(--p-slate-930);
+  --lx-bg-source-row: var(--p-teal-975);
+
+  /* ---- borders. The handoff's border/mid and border/soft each carry two
+         hexes; they are different jobs and must not be collapsed. ---- */
+  --lx-border-strong: var(--p-slate-780);
+  --lx-divider: var(--p-slate-780);
+  --lx-border-chrome: var(--p-slate-800);
+  --lx-border-table: var(--p-slate-820);
+  --lx-border-section: var(--p-slate-840);
+  --lx-border-row: var(--p-slate-860);
+
+  /* ---- text ---- */
+  --lx-text-primary: var(--p-slate-100);
+  --lx-text-secondary: var(--p-slate-150);
+  --lx-text-mono: var(--p-slate-200);
+  --lx-text-muted: var(--p-slate-380);
+  --lx-text-subtle: var(--p-slate-400);
+  --lx-text-faint: var(--p-slate-500);
+  --lx-text-faint-2: var(--p-slate-560);
+  --lx-text-faint-3: var(--p-slate-620);
+
+  /* ---- accent ramp. -on is text on a SOLID fill; -on-tint is body copy on a
+         tint. The handoff lists both under "accent/text-on"; conflating them
+         makes every primary button wrong in the light theme. ---- */
+  --lx-accent: var(--p-teal-400);
+  --lx-accent-on: var(--p-teal-990);
+  --lx-accent-tint-bg: var(--p-teal-980);
+  --lx-accent-tint-bg-deep: var(--p-teal-970);
+  --lx-accent-tint-border: var(--p-teal-900);
+  --lx-accent-tint-border-deep: var(--p-teal-900);
+  --lx-accent-tint-border-final: var(--p-teal-900);
+  --lx-accent-border-soft: var(--p-teal-880);
+  --lx-accent-tint-fg: var(--p-teal-400);
+  --lx-accent-tint-fg-deep: var(--p-teal-400);
+  --lx-accent-on-tint: var(--p-teal-300);
+  --lx-accent-on-tint-dim: var(--p-teal-500);
+  --lx-accent-bar: var(--p-teal-400);
+  --lx-accent-bar-muted: var(--p-teal-700);
+
+  /* ---- warn ramp ---- */
+  --lx-warn: var(--p-amber-400);
+  --lx-warn-tint-bg: var(--p-amber-970);
+  --lx-warn-surface-bg: var(--p-amber-980);
+  --lx-warn-callout-bg: var(--p-amber-960);
+  --lx-warn-button-bg: var(--p-amber-900);
+  --lx-warn-tint-border: var(--p-amber-750);
+  --lx-warn-tint-border-deep: var(--p-amber-800);
+  --lx-warn-row-border: var(--p-amber-940);
+  --lx-warn-tint-fg: var(--p-amber-400);
+  --lx-warn-on-tint: var(--p-amber-300);
+  --lx-warn-on-tint-strong: var(--p-amber-250);
+  --lx-warn-body-text: var(--p-amber-350);
+  --lx-warn-bar: var(--p-amber-400);
+  --lx-warn-bar-muted: var(--p-amber-600);
+
+  /* ---- danger ramp ---- */
+  --lx-danger: var(--p-coral-400);
+  --lx-danger-tint-bg: var(--p-coral-970);
+  --lx-danger-tint-bg-deep: var(--p-coral-960);
+  --lx-danger-cell-bg: var(--p-coral-980);
+  --lx-danger-tint-border: var(--p-coral-800);
+  --lx-danger-border-soft: var(--p-coral-900);
+  --lx-danger-tint-fg: var(--p-coral-400);
+  --lx-danger-on-tint: var(--p-coral-300);
+  --lx-danger-bar: var(--p-coral-400);
+
+  /* ---- neutral ramp ---- */
+  --lx-neutral-track: var(--p-slate-700);
+  --lx-neutral-track-soft: var(--p-slate-820);
+  --lx-neutral-tint-border: var(--p-slate-690);
+  --lx-neutral-border-strong: var(--p-slate-640);
+  --lx-neutral-on-tint: var(--p-slate-500);
+
+  /* ---- chips and effects ---- */
+  --lx-chip-bg: var(--p-teal-960);
+  --lx-chip-border: var(--p-teal-880);
+  --lx-chip-fg: var(--p-teal-300);
+  --lx-chip-dismiss: var(--p-teal-600);
+  /* S12: a chip a finding is about, and the chip a suggested fix puts in. */
+  --lx-chip-danger-bg: var(--lx-danger-cell-bg);
+  --lx-chip-danger-border: var(--lx-danger-tint-border);
+  --lx-chip-danger-fg: var(--lx-danger-on-tint);
+  --lx-chip-accepted-bg: var(--lx-accent-tint-bg-deep);
+  --lx-chip-accepted-border: var(--lx-accent);
+  --lx-chip-accepted-fg: var(--p-teal-250);
+  /* S16 CSV re-import diff. */
+  --lx-diff-del-bg: var(--p-coral-960);
+  --lx-diff-del-fg: var(--p-coral-300);
+  --lx-diff-ins-bg: var(--p-teal-970);
+  --lx-diff-ins-fg: var(--p-teal-250);
+  --lx-chip-removed-border: var(--p-coral-800);
+  --lx-chip-added-border: var(--p-teal-900);
+  /* S16's "From CSV" card: the text a reviewer sent, a shade off the panel. */
+  --lx-import-csv-card-bg: var(--p-teal-978);
+  --lx-import-csv-count: var(--p-teal-450);
+  --lx-scrim: rgb(6 9 10 / 72%);
+  --lx-shadow-modal: 0 30px 80px rgb(0 0 0 / 60%);
+  --lx-ring-selected: inset 2px 0 0 var(--lx-accent);
+  /* Not in the handoff — derived. On the designer-review list. */
+  /* S17–S19: Phrase checkout and tokens. */
+  --lx-bg-selected-hover: var(--p-teal-955);
+  --lx-bg-button-disabled: var(--p-slate-850);
+  --lx-danger-on-tint-dim: var(--p-coral-350);
+  --lx-danger-border-destructive: var(--p-coral-920);
+  --lx-ring-focus: 0 0 0 2px color-mix(in srgb, var(--lx-accent) 45%, transparent);
+}

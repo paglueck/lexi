@@ -1,0 +1,217 @@
+/*
+ * Global classes.
+ *
+ * Something belongs here only if it (a) styles DOM Angular did not template,
+ * (b) is a class API shared across many components, or (c) is part of the
+ * token/reset/font layer. Everything else lives in a component's own styles.
+ */
+
+/* ---- screen-reader-only text -------------------------------------------- */
+/* The clip-rect recipe, not display:none — the text must stay in the
+   accessibility tree. FR-3.7 depends on this. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- badges -------------------------------------------------------------- */
+/*
+ * Styled globally because the grid will emit badges as raw markup in M5 rather
+ * than one component instance per cell. Colour comes entirely from the local
+ * ramp set by [data-state] / [data-tone] in tokens/ramps.css.
+ */
+.lx-badge {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  gap: var(--lx-sp-2);
+  padding: 1px 3px;
+  border: 1px solid var(--r-bd);
+  border-radius: var(--lx-r-3);
+  background: var(--r-bg);
+  color: var(--r-fg);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-9);
+  font-weight: var(--lx-fw-500);
+  line-height: var(--lx-lh-1);
+  white-space: nowrap;
+}
+
+.lx-badge[data-size='xs'] {
+  padding: 0 3px;
+  font-size: var(--lx-fs-8-5);
+}
+
+.lx-badge[data-size='md'] {
+  padding: 1px 5px;
+  font-size: var(--lx-fs-9-5);
+}
+
+/* Body text that follows a state — this is how a machine draft reads as
+   provisional without a single line of JavaScript. */
+.lx-cell__text {
+  color: var(--r-body);
+}
+
+/* ---- placeholder chips --------------------------------------------------- */
+/*
+ * Global, and the component that renders one declares NO styles of its own.
+ * In M5 the grid emits chips as raw <span class="lx-chip"> — twelve columns by
+ * forty-five visible rows would otherwise be hundreds of component instances
+ * churning on every scroll frame. An encapsulated style would carry an
+ * _ngcontent attribute and the raw spans would render unstyled.
+ */
+.lx-chip {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  margin: 0 2px;
+  padding: 0 5px;
+  border: 1px solid var(--lx-chip-border);
+  border-radius: var(--lx-r-4);
+  background: var(--lx-chip-bg);
+  color: var(--lx-chip-fg);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+  white-space: nowrap;
+  user-select: none;
+  /* Without this, {{ invoiceCount }} visibly scrambles inside Arabic text. */
+  unicode-bidi: isolate;
+}
+
+.lx-chip[data-size='panel'] {
+  height: 18px;
+  padding: 0 6px;
+  font-size: var(--lx-fs-10-5);
+}
+
+/* The "insert missing placeholder" slot (FR-3.8) — the only interactive chip. */
+.lx-chip[data-variant='missing'] {
+  height: 18px;
+  padding: 0 6px;
+  border-style: dashed;
+  border-color: var(--lx-neutral-tint-border);
+  background: var(--lx-bg-field);
+  color: var(--lx-text-subtle);
+  cursor: pointer;
+}
+
+/* S12: the chip a finding is about, and the chip a suggested fix puts in. */
+.lx-chip[data-tone='danger'] {
+  border-color: var(--lx-chip-danger-border);
+  background: var(--lx-chip-danger-bg);
+  color: var(--lx-chip-danger-fg);
+}
+
+.lx-chip[data-tone='accepted'] {
+  border-color: var(--lx-chip-accepted-border);
+  background: var(--lx-chip-accepted-bg);
+  color: var(--lx-chip-accepted-fg);
+}
+
+/* A placeholder the target should have, drawn where the source implies it. */
+.lx-chip[data-tone='absent'] {
+  border: 1px dashed var(--lx-danger);
+  background: var(--lx-chip-danger-bg);
+  color: var(--lx-chip-danger-fg);
+}
+
+/* ---- typography helpers -------------------------------------------------- */
+.lx-caption {
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-10);
+  font-weight: var(--lx-fw-400);
+  letter-spacing: var(--lx-track-cap);
+  text-transform: uppercase;
+  color: var(--lx-text-faint);
+}
+
+.lx-caption--narrow {
+  letter-spacing: var(--lx-track-cap-narrow);
+}
+
+.lx-caption--wide {
+  font-size: var(--lx-fs-10-5);
+  letter-spacing: var(--lx-track-cap-xwide);
+}
+
+.lx-mono {
+  font-family: var(--lx-font-mono);
+}
+
+/* Every right-aligned figure column, or the numbers jitter as they change. */
+.lx-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Deviation 2: grid rows are single-line and ellipsised; the full text lives in
+   the detail panel and in focus mode. */
+.lx-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- hairline grid ------------------------------------------------------- */
+/* A 1px gap over a border-coloured background reads as hairlines, with no
+   per-cell borders to get wrong at the edges. */
+.lx-hairline-grid {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--lx-border-table);
+  border-radius: var(--lx-r-9);
+  background: var(--lx-border-table);
+  overflow: hidden;
+}
+
+.lx-hairline-grid > * {
+  background: var(--lx-bg-cell);
+  padding: var(--lx-sp-16) var(--lx-sp-18);
+}
+
+/* ---- fields -------------------------------------------------------------- */
+.lx-input {
+  height: 34px;
+  padding: 0 var(--lx-sp-12);
+  border: 1px solid var(--lx-border-strong);
+  border-radius: var(--lx-r-7);
+  background: var(--lx-bg-field);
+  color: var(--lx-text-secondary);
+  font-family: var(--lx-font-mono);
+  font-size: var(--lx-fs-12);
+}
+
+.lx-input::placeholder {
+  color: var(--lx-text-faint-2);
+}
+
+.lx-input:focus-visible {
+  border-color: var(--lx-accent);
+  box-shadow: none;
+}
+
+.lx-input[data-size='sm'] {
+  height: 30px;
+  font-size: var(--lx-fs-12-5);
+}
+
+/* ---- overlays ------------------------------------------------------------ */
+/* CDK renders the backdrop outside every component view, so it cannot be
+   styled from one. */
+.lx-scrim {
+  background: var(--lx-scrim);
+}
+
+/* ---- scrollbars ---------------------------------------------------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--lx-border-strong) transparent;
+}

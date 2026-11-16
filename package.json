@@ -1,0 +1,60 @@
+{
+  "name": "lexi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local XLIFF translation manager for Angular projects",
+  "license": "GPL-3.0-or-later",
+  "author": "Patrick Glück",
+  "homepage": "https://github.com/paglueck/lexi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paglueck/lexi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/paglueck/lexi/issues"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "bin": {
+    "lexi": "./bin/lexi.mjs"
+  },
+  "engines": {
+    "node": ">=22.22.3"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build:web && npm run build:server && npm run build:licenses",
+    "build:web": "npm -w @lexi/web run build",
+    "build:server": "npm -w @lexi/server run build",
+    "build:licenses": "node scripts/collect-licenses.mjs",
+    "start": "node bin/lexi.mjs",
+    "desktop:dev": "npm run build && npm -w @lexi/desktop start",
+    "desktop:mac": "npm -w @lexi/desktop run dist:mac",
+    "desktop:win": "npm -w @lexi/desktop run dist:win",
+    "desktop:linux": "npm -w @lexi/desktop run dist:linux",
+    "corpus:large": "node scripts/make-large-corpus.mjs",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "tsc -b --pretty && npm run typecheck:web",
+    "typecheck:web": "npm -w @lexi/web run typecheck",
+    "lint": "eslint . && stylelint \"apps/web/src/**/*.css\"",
+    "lint:fix": "eslint . --fix && stylelint \"apps/web/src/**/*.css\" --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/node": "^26.5.1",
+    "angular-eslint": "^22.5.0",
+    "diff": "^9.0.0",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.6",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard": "^39.0.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^4.0.8"
+  }
+}

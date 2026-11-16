@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-GB" datatype="plaintext" original="ng2.template" target-language="pl">
+    <body>
+      <trans-unit id="d91f04ba77c1" datatype="html">
+        <source>{VAR_PLURAL, plural, =0 {no items} one {1 item} other {# items}}</source>
+        <target state="translated">{VAR_PLURAL, plural, =0 {brak pozycji} one {1 pozycja} other {# pozycji}}</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/checkout/basket.component.html</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="checkout.free_ship" datatype="html">
+        <source>Free shipping over <x id="INTERPOLATION" equiv-text="{{ threshold }}"/></source>
+        <target state="new"/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/checkout/shipping.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

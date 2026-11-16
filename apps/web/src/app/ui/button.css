@@ -1,0 +1,131 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--lx-sp-7);
+  height: var(--b-h);
+  padding: 0 var(--b-px);
+  border: 1px solid var(--b-bd);
+  border-radius: var(--b-r);
+  background: var(--b-bg);
+  color: var(--b-fg);
+  font-family: var(--lx-font-ui);
+  font-size: var(--b-fs);
+  font-weight: var(--b-fw);
+  line-height: var(--lx-lh-1);
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ---- variant: colour only ---- */
+:host([data-variant='primary']) {
+  --b-bg: var(--lx-accent);
+  --b-bd: transparent;
+  --b-fg: var(--lx-accent-on);
+}
+
+:host([data-variant='secondary']) {
+  --b-bg: var(--lx-bg-raised);
+  --b-bd: var(--lx-border-strong);
+  --b-fg: var(--lx-text-secondary);
+}
+
+:host([data-variant='neutral']) {
+  --b-bg: var(--lx-bg-field);
+  --b-bd: var(--lx-border-strong);
+  --b-fg: var(--lx-text-secondary);
+}
+
+:host([data-variant='accent-soft']) {
+  --b-bg: var(--lx-accent-tint-bg);
+  --b-bd: var(--lx-accent-tint-border);
+  --b-fg: var(--lx-accent-on-tint);
+}
+
+:host([data-variant='warn-soft']) {
+  --b-bg: var(--lx-warn-button-bg);
+  --b-bd: var(--lx-warn-tint-border);
+  --b-fg: var(--lx-warn-on-tint-strong);
+}
+
+:host([data-variant='danger-soft']) {
+  --b-bg: var(--lx-bg-raised);
+  --b-bd: var(--lx-danger-border-soft);
+  --b-fg: var(--lx-danger-on-tint);
+}
+
+:host([data-variant='ghost']) {
+  --b-bg: transparent;
+  --b-bd: transparent;
+  --b-fg: var(--lx-text-faint);
+}
+
+:host([data-variant='ghost']:hover:not(:disabled)) {
+  --b-bg: var(--lx-bg-tab-active);
+  --b-fg: var(--lx-text-secondary);
+
+  filter: none;
+}
+
+/* ---- size: geometry only ---- */
+:host([data-size='hero']) {
+  --b-h: 38px;
+  --b-px: var(--lx-sp-18);
+  --b-r: var(--lx-r-7);
+  --b-fs: var(--lx-fs-13-5);
+  --b-fw: var(--lx-fw-600);
+}
+
+:host([data-size='md']) {
+  --b-h: 36px;
+  --b-px: var(--lx-sp-16);
+  --b-r: var(--lx-r-7);
+  --b-fs: var(--lx-fs-13);
+  --b-fw: var(--lx-fw-500);
+}
+
+:host([data-size='sm']) {
+  --b-h: 32px;
+  --b-px: var(--lx-sp-12);
+  --b-r: var(--lx-r-7);
+  --b-fs: var(--lx-fs-12-5);
+  --b-fw: var(--lx-fw-600);
+}
+
+:host([data-size='field']) {
+  --b-h: 30px;
+  --b-px: var(--lx-sp-10);
+  --b-r: var(--lx-r-7);
+  --b-fs: var(--lx-fs-12);
+  --b-fw: var(--lx-fw-500);
+}
+
+:host([data-size='xs']) {
+  --b-h: 26px;
+  --b-px: var(--lx-sp-10);
+  --b-r: var(--lx-r-6);
+  --b-fs: var(--lx-fs-11-5);
+  --b-fw: var(--lx-fw-600);
+}
+
+/* Square, for a lone icon: width follows the size's height. */
+:host([data-icon-only]) {
+  width: var(--b-h);
+  padding: 0;
+}
+
+/* The one place the mock makes weight variant-driven rather than size-driven. */
+:host([data-variant='secondary'][data-size='hero']) {
+  --b-fw: var(--lx-fw-500);
+}
+
+:host(:disabled),
+:host([aria-disabled='true']) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+:host(:hover:not(:disabled)) {
+  filter: brightness(1.08);
+}

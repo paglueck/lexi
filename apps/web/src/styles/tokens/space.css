@@ -1,0 +1,63 @@
+/* Spacing, radii, and the fixed region sizes the layouts are built from. */
+:root {
+  --lx-sp-1: 1px;
+  --lx-sp-2: 2px;
+  --lx-sp-3: 3px;
+  --lx-sp-4: 4px;
+  --lx-sp-6: 6px;
+  --lx-sp-7: 7px;
+  --lx-sp-8: 8px;
+  --lx-sp-10: 10px;
+  --lx-sp-12: 12px;
+  --lx-sp-14: 14px;
+  --lx-sp-16: 16px;
+  --lx-sp-18: 18px;
+  --lx-sp-20: 20px;
+  --lx-sp-22: 22px;
+  --lx-sp-24: 24px;
+  --lx-sp-26: 26px;
+  --lx-sp-28: 28px;
+  --lx-sp-32: 32px;
+  --lx-sp-36: 36px;
+  --lx-sp-40: 40px;
+  --lx-sp-48: 48px;
+  --lx-sp-56: 56px;
+
+  --lx-r-2: 2px;
+  --lx-r-3: 3px;
+  --lx-r-4: 4px;
+  --lx-r-5: 5px;
+  --lx-r-6: 6px;
+  --lx-r-7: 7px;
+  --lx-r-8: 8px;
+  --lx-r-9: 9px;
+  --lx-r-12: 12px;
+  --lx-r-full: 50%;
+
+  /* Fixed regions: these flex nowhere, the table column between them does. */
+  --lx-w-rail: 244px;
+  --lx-w-panel: 330px;
+  --lx-w-settings-nav: 220px;
+  --lx-w-runlog: 460px;
+  --lx-w-dash-rail: 360px;
+  --lx-w-termbase-editor: 400px;
+  --lx-w-modal: 900px;
+  --lx-w-modal-sm: 640px;
+  /* S1's Environment column. */
+  --lx-w-env-panel: 420px;
+  /* S12, Issues: the rule list and the finding detail. */
+  --lx-w-issues-rail: 280px;
+  --lx-w-issues-panel: 400px;
+  /* S16, Import reviewed CSV: the selected row's detail. */
+  --lx-w-import-panel: 460px;
+
+  --lx-h-titlebar: 44px;
+  --lx-h-toolbar: 42px;
+  --lx-h-localebar: 38px;
+  --lx-h-statusbar: 32px;
+  /* Fixed, single-line, ellipsised — deviation 2. Variable row height is
+     precisely what makes 20k x 10 at 60fps hard. */
+  --lx-h-row: 34px;
+  --lx-h-row-dash: 42px;
+  --lx-h-row-wizard: 44px;
+}
