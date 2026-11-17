@@ -1,6 +1,14 @@
 // Copyright (c) 2026 Patrick Glück
 // SPDX-License-Identifier: GPL-3.0-or-later
-import { Component, Injector, computed, effect, inject, untracked } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  Injector,
+  computed,
+  effect,
+  inject,
+  untracked,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -87,9 +95,12 @@ export class App {
     // The desktop app looks for an update on every start, behind a dialog that
     // holds the app until the check has answered. Elsewhere the server says
     // `supported: false` and nothing opens. A lazy chunk either way, so the
-    // initial bundle carries none of it.
+    // initial bundle carries none of it. The chunk can arrive after the shell
+    // is gone (a test's teardown), and a destroyed injector throws on get().
+    let destroyed = false;
+    inject(DestroyRef).onDestroy(() => (destroyed = true));
     void import('./features/update/update-dialog.js').then((m) =>
-      m.checkForUpdatesAtStartup(this.#injector),
+      destroyed ? undefined : m.checkForUpdatesAtStartup(this.#injector),
     );
 
     this.#http.get<Health>('/api/health').subscribe({

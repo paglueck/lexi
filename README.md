@@ -1,12 +1,13 @@
 # Lexi
 
-**Review and manage the translations of an Angular app — locally, in XLIFF, without mangling your
-files.**
+**Review and manage the translations of your app — locally, without mangling your files.**
 
-Lexi opens the XLIFF 1.2 files that `ng extract-i18n` produces, shows every translation unit in a
-key-by-locale grid, tells you at a glance what is still untranslated, and drafts translations with
-a language model you choose — steered by your own style guides, a term base and the context notes
-already in the files. Saving writes back only what you changed: a one-word edit is a one-line diff.
+Lexi opens your translation files, shows every translation unit in a key-by-locale grid, tells you
+at a glance what is still untranslated, and drafts translations with a language model you choose —
+steered by your own style guides, a term base and the context notes already in the files. Saving writes back only what you changed: a one-word edit is a one-line diff.
+
+Lexi starts with the XLIFF 1.2 files that Angular's `ng extract-i18n` produces. Support for more
+translation file formats is planned.
 
 Created and maintained by **Patrick Glück**. Lexi is free and open source software under the
 [GNU General Public License v3.0 or later](LICENSE). See
@@ -16,7 +17,7 @@ Created and maintained by **Patrick Glück**. Lexi is free and open source softw
 
 ## Why Lexi
 
-- **Your files stay yours.** Lexi never regenerates an XLIFF file. It splices edits into the
+- **Your files stay yours.** Lexi never regenerates a translation file. It splices edits into the
   original text, so opening and saving a file changes nothing, and an edit touches exactly the
   lines it has to. Placeholders such as `<x id="INTERPOLATION"/>` keep their original bytes.
 - **Local first.** Lexi runs on your machine, binds to `127.0.0.1` and has no account and no
@@ -181,8 +182,8 @@ forbids it from making outbound requests at all. Details in
 
 ## Limitations
 
-- **XLIFF 1.2 only**, in the shape Angular's `ng extract-i18n` writes. XLIFF 2.x files are not
-  supported.
+- **XLIFF 1.2 only for now**, in the shape Angular's `ng extract-i18n` writes. XLIFF 2.x and other
+  formats are not supported yet; more formats are planned.
 - **Not built yet:** reconciling translations when Angular's content-hash ids change after an
   English copy edit (FR-2.5), a translation memory, a maximum-length rule, a headless CLI for CI
   (`lexi check`) and a per-unit change history.

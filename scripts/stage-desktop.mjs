@@ -61,7 +61,7 @@ writeJson(join(app, 'package.json'), {
   name: 'lexi',
   productName: 'Lexi',
   version,
-  description: 'Local XLIFF translation manager',
+  description: 'Local translation manager',
   author: 'Patrick Glück',
   license: 'GPL-3.0-or-later',
   type: 'module',

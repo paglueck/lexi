@@ -1,4 +1,4 @@
-The first public release of Lexi, a local translation manager for Angular XLIFF files. Free software under the GNU GPL v3 or later.
+The first public release of Lexi, a local translation manager. This release works with the XLIFF 1.2 files Angular produces; more translation file formats are planned. Free software under the GNU GPL v3 or later.
 
 - Your files stay yours: Lexi splices edits into the original XLIFF instead of regenerating it, so a one-word edit is a one-line diff and placeholders keep their bytes.
 - Grid across all locales with filters, search and tens of thousands of units; a placeholder-safe editor with RTL support and undo/redo.

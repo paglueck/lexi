@@ -5,7 +5,25 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      # Angular's packages move in lockstep; one PR for all of them.
+      angular:
+        patterns: ['@angular/*', '@angular-devkit/*', 'angular-eslint']
+      electron:
+        patterns: ['electron', 'electron-builder', 'electron-updater']
+      # Everything else that is not a major bump: one weekly PR.
+      minor-and-patch:
+        update-types: [minor, patch]
+        exclude-patterns: ['@angular/*', '@angular-devkit/*', 'angular-eslint', 'electron*']
+    ignore:
+      # Angular 22's compiler-cli requires typescript >=6.0 <6.1; a newer
+      # TypeScript has to wait for the Angular release that supports it.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

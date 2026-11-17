@@ -20,7 +20,7 @@ const HERE = new URL('.', import.meta.url);
 const BUNDLE = new URL('../apps/server/dist/main.js', HERE);
 const PUBLIC_INDEX = new URL('../apps/server/public/index.html', HERE);
 
-const USAGE = `lexi — local XLIFF translation manager
+const USAGE = `lexi — local translation manager
 
   lexi [path] [options]
 

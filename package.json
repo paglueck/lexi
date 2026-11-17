@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Local XLIFF translation manager for Angular projects",
+  "description": "Local translation manager for app translation files, starting with Angular XLIFF",
   "license": "GPL-3.0-or-later",
   "author": "Patrick Glück",
   "homepage": "https://github.com/paglueck/lexi",
@@ -55,6 +55,6 @@
     "stylelint-config-standard": "^39.0.1",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.70.0",
-    "vitest": "^4.0.8"
+    "vitest": "^5.1.0"
   }
 }
