@@ -17,13 +17,13 @@
   "license": "GPL-3.0-or-later",
   "author": "Patrick Glück",
   "dependencies": {
-    "@angular/cdk": "^22.1.6",
-    "@angular/common": "^22.1.0",
+    "@angular/cdk": "^22.3.0",
+    "@angular/common": "^22.3.0",
     "@angular/compiler": "^22.1.0",
     "@angular/core": "^22.1.0",
-    "@angular/forms": "^22.1.0",
+    "@angular/forms": "^22.3.0",
     "@angular/platform-browser": "^22.1.0",
-    "@angular/router": "^22.1.0",
+    "@angular/router": "^22.3.0",
     "@fontsource-variable/noto-sans": "^5.3.0",
     "@fontsource-variable/noto-sans-arabic": "^5.3.0",
     "@fontsource-variable/noto-sans-hebrew": "^5.3.0",
@@ -35,9 +35,9 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@angular/build": "^22.1.8",
-    "@angular/cli": "^22.1.8",
-    "@angular/compiler-cli": "^22.1.0",
+    "@angular/build": "^22.3.0",
+    "@angular/cli": "^22.3.0",
+    "@angular/compiler-cli": "^22.3.0",
     "jsdom": "^31.0.1",
     "typescript": "~6.0.3",
     "vitest": "^5.1.0"
